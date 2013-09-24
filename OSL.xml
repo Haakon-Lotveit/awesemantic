@@ -1,0 +1,26 @@
+<airport xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://flydata.avinor.no/XmlFeed.xsd" name="OSL">
+<flights lastUpdate="2013-09-23T19:09:50Z">
+<flight uniqueID="3657688">
+<airline>DY</airline>
+<flight_id>DY634</flight_id>
+<dom_int>D</dom_int>
+<schedule_time>2013-09-23T18:00:00Z</schedule_time>
+<arr_dep>D</arr_dep>
+<airport>BGO</airport>
+<check_in>CD</check_in>
+<gate>16</gate>
+<status code="D" time="2013-09-23T17:57:00Z"/>
+</flight>
+
+<flight uniqueID="3657689">
+<airline>DY</airline>
+<flight_id>DY634</flight_id>
+<dom_int>D</dom_int>
+<schedule_time>2013-09-23T18:55:00Z</schedule_time>
+<arr_dep>A</arr_dep>
+<airport>OSL</airport>
+<status code="A" time="2013-09-23T18:45:00Z"/>
+<belt>1</belt>
+</flight>
+</flights>
+</airport>
