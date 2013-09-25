@@ -69,6 +69,7 @@ public class RDFLoader extends Object {
 
 						"}";
 
+		// Haakon: StoreRDF er en enkel wrapper. Akkurat nå gjør den ikke så mye annet enn å la deg skrive litegranne mindre.
 		StoreRDF store = StoreRDF.create();
 //		Dataset dataset = TDBFactory.createDataset("tdb/flightSTORE") ;
 //		Model model = dataset.getDefaultModel();
