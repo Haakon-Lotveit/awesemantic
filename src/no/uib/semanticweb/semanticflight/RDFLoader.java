@@ -21,6 +21,8 @@ package no.uib.semanticweb.semanticflight ;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import no.uib.semanticweb.semanticflight.rdfstore.StoreRDF;
+
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.query.Dataset;
@@ -67,9 +69,11 @@ public class RDFLoader extends Object {
 
 						"}";
 
-
-		Dataset dataset = TDBFactory.createDataset("tdb/flightSTORE") ;
-		Model model = dataset.getDefaultModel();
+		StoreRDF store = StoreRDF.create();
+//		Dataset dataset = TDBFactory.createDataset("tdb/flightSTORE") ;
+//		Model model = dataset.getDefaultModel();
+		Dataset dataset = store.getDataset();
+		Model model = store.getModel();
 		System.out.println(model.size());
 
 		Query query = QueryFactory.create(queryString);
