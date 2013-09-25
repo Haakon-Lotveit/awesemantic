@@ -8,6 +8,8 @@ public class SemanticFlight {
 
 		//call run example
 		dpe.runExample("OSL.xml");
+		
+		//wooooooop!
 	}
 
 }
