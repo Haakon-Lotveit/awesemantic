@@ -1,8 +1,6 @@
 package no.uib.semanticweb.semanticflight;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -121,7 +119,8 @@ public class SemanticXMLParser {
 		}
 
 		//Create a new Employee with the value read from the xml nodes
-		Flight e = new Flight(airline, flightID, arrOrDep, airport, statusCode, scheduledTime, statusTime);				
+		Flight e = new Flight(airline, flightID, arrOrDep, airport,
+								statusCode, scheduledTime, statusTime);				
 
 		return e;
 	}
@@ -167,7 +166,7 @@ public class SemanticXMLParser {
 
 		System.out.println("No of flights '" + flights.size() + "'.");
 
-		Iterator it = flights.iterator();
+		Iterator<Flight> it = flights.iterator();
 		while(it.hasNext()) {
 			System.out.println(it.next().toString());
 		}
