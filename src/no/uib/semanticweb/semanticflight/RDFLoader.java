@@ -24,6 +24,7 @@ import java.util.Iterator;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.DatasetFactory;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -46,29 +47,27 @@ public class RDFLoader extends Object {
 
 	public void loadAirportsDbpedia () {
 
-		
-//		String queryString =
-//				"PREFIX dbo: <http://dbpedia.org/ontology/>" +
-//
-//						"SELECT DISTINCT ?airports ?iata WHERE {" +
-//						
-//						"?airports dbo:iataLocationIdentifier ?iata ."+
-//						
-//
-//						"}";
-		
+
+		//		String queryString =
+		//				"PREFIX dbo: <http://dbpedia.org/ontology/>" +
+		//
+		//						"SELECT DISTINCT ?airports ?iata WHERE {" +
+		//						
+		//						"?airports dbo:iataLocationIdentifier ?iata ."+
+		//						
+		//
+		//						"}";
+
 		String queryString =
 				"PREFIX dbo: <http://dbpedia.org/ontology/>" +
 
 						"CONSTRUCT {?airports dbo:iataLocationIdentifier ?iata} WHERE {" +
-						
-						"?airports dbo:iataLocationIdentifier ?iata ." +
-						
-						
+
+						"?airports dbo:iataLocationIdentifier ?iata ." +												
 
 						"}";
-		
-		
+
+
 		Dataset dataset = TDBFactory.createDataset("tdb/flightSTORE") ;
 		Model model = dataset.getDefaultModel();
 		System.out.println(model.size());
@@ -79,16 +78,29 @@ public class RDFLoader extends Object {
 		QueryExecution qe = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", query);
 		model = qe.execConstruct();
 
-//		model.write(System.out, "TURTLE");
+
+		//		model.write(System.out, "TURTLE");
 		System.out.println(model.size());
-		// Output query results	
-//		ResultSetFormatter.out(System.out, results, query);
-		
-		
-//		dataset = (Dataset) results;
-		
-		
+		dataset = DatasetFactory.create(dataset);
+		//		model.write(System.out, "TURTLE");
+		//		ResultSetFormatter.out(System.out, results, query);
+
+		Query query2 = QueryFactory.create( "" +
+				"PREFIX dbo: <http://dbpedia.org/ontology/>" +
+				"SELECT ?airports ?iata WHERE {" +
+				"?airports dbo:iataLocationIdentifier ?iata ." +
+				"}");
+
+		QueryExecution queryExecution = QueryExecutionFactory.create(query2, dataset);
+        
+		ResultSet res = queryExecution.execSelect();
+
+		while (res.hasNext()){
+			System.out.println(res.next().toString());
+		}
+
 		dataset.close();
+
 
 	}
 }
