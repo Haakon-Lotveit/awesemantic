@@ -31,29 +31,7 @@ public class Flight {
 		this.statusCode = statusCode2;
 		this.statusTime = statusTime2;
 		this.scheduledTime = scheduledTime2;
-	}
-
-	public String getAge() {
-		return scheduledTime;
-	}
-
-	public String getName() {
-		return flight_id;
-	}
-
-	public void setName(String name) {
-		this.flight_id = name;
-	}
-
-
-	public String getType() {
-		return arrOrDep;
-	}
-
-	public void setType(String type) {
-		this.arrOrDep = type;
 	}	
-	
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
@@ -67,4 +45,34 @@ public class Flight {
 		
 		return sb.toString();
 	}
+
+	public String getFlight_id() {
+		return flight_id;
+	}
+
+	public String getScheduledTime() {
+		return scheduledTime;
+	}
+
+	public String getArrOrDep() {
+		return arrOrDep;
+	}
+
+	public String getAirport() {
+		return airport;
+	}
+
+	public String getStatusCode() {
+		return statusCode;
+	}
+
+	public String getStatusTime() {
+		return statusTime;
+	}
+
+	public String getAirline() {
+		return airline;
+	}
+	
+	
 }

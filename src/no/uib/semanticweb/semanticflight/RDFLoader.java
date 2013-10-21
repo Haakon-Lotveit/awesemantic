@@ -18,25 +18,29 @@
 
 package no.uib.semanticweb.semanticflight ;
 
+import java.util.List;
+
 import no.uib.semanticweb.semanticflight.rdfstore.StoreRDF;
 
 import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.DatasetFactory;
 import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ReadWrite;
-import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.update.GraphStore;
 import com.hp.hpl.jena.update.GraphStoreFactory;
 import com.hp.hpl.jena.update.UpdateExecutionFactory;
 import com.hp.hpl.jena.update.UpdateFactory;
 import com.hp.hpl.jena.update.UpdateProcessor;
 import com.hp.hpl.jena.update.UpdateRequest;
+import com.hp.hpl.jena.vocabulary.VCARD;
 
-/** Tutorial 2 resources as property values
+/**
+ * 
+ * @author ken
+ *
  */
 public class RDFLoader extends Object {
 
@@ -136,5 +140,74 @@ public class RDFLoader extends Object {
 //			System.out.println(res.next().toString());
 //		}
 //		dataset.close();
+	}
+
+	public void writeFlightsToTDB(List<Flight> flights) {
+		
+		String propertyURI = "http://awesemantic.com/properties/";
+		String resourceURI = "http://awesemantic.com/resource/";
+		
+		StoreRDF store = StoreRDF.create();
+		Dataset dataset = store.getDataset();
+		dataset.begin(ReadWrite.WRITE) ;
+		Model model = store.getModel();
+		System.out.println(model.size());
+		
+		// Write properties
+		Property hasFlightID = model.createProperty(propertyURI + "hasFlightID");
+		Property scheduledTime = model.createProperty(propertyURI + "schedueledTime"); 
+		Property arrivingORDeparting = model.createProperty(propertyURI + "arrivingOrDeparting");
+		Property airline = model.createProperty(propertyURI + "airline");
+		// To or from according to XML, not originating xml. Add arrOrDepValue after airport
+		Property arrivingAirport = model.createProperty(propertyURI + "arrivingAirport");
+		Property departingAirport = model.createProperty(propertyURI + "departingAirport");
+		// Create anonymous node if exists
+		Property statusCode = model.createProperty(propertyURI + "statusCode");
+		Property statusTime = model.createProperty(propertyURI + "statusTime");
+		
+		
+		for(int i = 0; i < flights.size() ; i++) {
+			Flight f = flights.get(i);						
+			
+//			Resource flightRes  = model.createResource(resourceURI + f.getFlight_id())
+//		             .addProperty(hasFlightID, f.getFlight_id())
+//		             .addProperty(scheduledTime, f.getScheduledTime())
+//		             .addProperty(arrivingORDeparting, f.getArrOrDep())
+//		             .addProperty(airline, f.getAirline());
+//			System.out.println(f.getArrOrDep());
+			if(f.getArrOrDep().equals("A")) {
+				Resource flightRes  = model.createResource(resourceURI + f.getFlight_id())
+			             .addProperty(hasFlightID, f.getFlight_id())
+			             .addProperty(scheduledTime, f.getScheduledTime())
+			             .addProperty(arrivingORDeparting, f.getArrOrDep())
+			             .addProperty(airline, f.getAirline())
+			             .addProperty(arrivingAirport, f.getAirport())
+			             .addProperty(VCARD.N, 
+			            		 model.createResource()
+			            		 .addProperty(statusCode, f.getStatusCode())
+			            		 .addLiteral(statusTime, f.getStatusTime()));
+			}
+			
+			if(f.getArrOrDep().equals("D")) {
+				Resource flightRes  = model.createResource(resourceURI + f.getFlight_id())
+			             .addProperty(hasFlightID, f.getFlight_id())
+			             .addProperty(scheduledTime, f.getScheduledTime())
+			             .addProperty(arrivingORDeparting, f.getArrOrDep())
+			             .addProperty(airline, f.getAirline())
+			             .addProperty(departingAirport, f.getAirport())
+			             .addProperty(VCARD.N, 
+			            		 model.createResource()
+			            		 .addProperty(statusCode, f.getStatusCode())
+			            		 .addLiteral(statusTime, f.getStatusTime()));
+			}
+				
+		}
+		
+		dataset.commit();
+		dataset.close();
+		store = null;
+		dataset = null;
+		model = null;
+				
 	}
 }

@@ -8,11 +8,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 
 public class XmlSingle {
 
-
+	private static Queue<File> xmlQueue = new LinkedList<File>();
 	/**
 	 * @param args
 	 */
@@ -25,6 +27,9 @@ public class XmlSingle {
 				String airport = iata.get(round).get(i); 
 				File f = new File("xml/xmlA/" + iata.get(round).get(i)+ "A.xml");
 				File f2 = new File("xml/xmlD/" + iata.get(round).get(i)+ "D.xml");
+				xmlQueue.add(f);
+				xmlQueue.add(f2);
+
 				if(f.isFile()|f2.isFile()){
 
 				}
@@ -100,9 +105,12 @@ public class XmlSingle {
 					long endTime = System.nanoTime();
 
 					long duration = endTime - startTime;
-					System.out.println(duration);
+//					System.out.println(duration);
 				}
 			}
 		}
+	}
+	public Queue<File> getXmlQueue() {
+		return xmlQueue;
 	}
 }

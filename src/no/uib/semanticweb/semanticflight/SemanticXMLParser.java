@@ -35,9 +35,10 @@ public class SemanticXMLParser {
 		parseDocument();
 
 		//Iterate through the list and print the data
-		printData();
+//		printData();
 
 	}
+
 
 
 	private void parseXmlFile(String fileURI){
@@ -120,7 +121,7 @@ public class SemanticXMLParser {
 
 		//Create a new Employee with the value read from the xml nodes
 		Flight e = new Flight(airline, flightID, arrOrDep, airport,
-								statusCode, scheduledTime, statusTime);				
+				statusCode, scheduledTime, statusTime);				
 
 		return e;
 	}
@@ -170,5 +171,9 @@ public class SemanticXMLParser {
 		while(it.hasNext()) {
 			System.out.println(it.next().toString());
 		}
+	}
+
+	public List<Flight> getFlights() {
+		return flights;
 	}
 }

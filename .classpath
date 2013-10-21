@@ -8,7 +8,7 @@
 	<classpathentry kind="lib" path="libs/httpclient-4.2.3.jar"/>
 	<classpathentry kind="lib" path="libs/httpcore-4.2.2.jar"/>
 	<classpathentry kind="lib" path="libs/jcl-over-slf4j-1.6.4.jar"/>
-	<classpathentry kind="lib" path="libs/jena-arq-2.10.1.jar"/>
+	<classpathentry kind="lib" path="libs/jena-arq-2.10.1.jar" sourcepath="/home/ken/.m2/repository/org/apache/jena/jena-arq/2.10.1/jena-arq-2.10.1-sources.jar"/>
 	<classpathentry kind="lib" path="libs/jena-core-2.10.1.jar"/>
 	<classpathentry kind="lib" path="libs/jena-iri-0.9.6.jar"/>
 	<classpathentry kind="lib" path="libs/jena-tdb-0.10.1.jar"/>
