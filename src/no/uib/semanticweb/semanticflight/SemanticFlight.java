@@ -2,6 +2,7 @@ package no.uib.semanticweb.semanticflight;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 
@@ -19,16 +20,27 @@ import com.hp.hpl.jena.rdf.model.Model;
 public class SemanticFlight {
 
 	public static void main(String[] args){
-		
+
 		long time = System.currentTimeMillis();
 		XmlSingle single = new XmlSingle();
 		ArrayList<ArrayList<String>> li = new ArrayList<ArrayList<String>>();
 		ArrayList<String> fly = new ArrayList<String>();
-		fly.add("BGO");
-		li.add(fly);
 
-		// Downloads all airports connected to airports in li.
-		single.connections(li, 0, 5);
+		String[] avinorAirPorts = {"AES","KSU","NVK","FBU","OSL","BVG","BOO","MQN",
+				"MJF","OSY","SDN","ALF","ANX","BJF","BDU","BNN",
+				"FDE","VDB","FRO","HFT","EVE","HAU","HVG","KKN",
+				"KRS","LKL","LKN","MEH","MOL","RRS","RVK","RET",
+				"SOJ","SSJ","SOG","SKN","LYR","SVJ","TOS","TRD",
+				"VRY","VDS","VAW","HOV","BGO","HAA","SVG"};
+		List<String> aviList = Arrays.asList(avinorAirPorts);
+
+		for(int i = 0 ; i < aviList.size() ; i++) {
+			fly.add(aviList.get(i));
+			li.add(fly);
+
+			// Downloads all airports connected to airports in li.
+			single.connections(li, 0, 5);
+		}
 		Queue<File> ls = single.getXmlQueue();
 		//		while(ls.peek() != null) {
 		//			System.out.println(ls.poll().getPath());
@@ -66,23 +78,23 @@ public class SemanticFlight {
 		set.begin(ReadWrite.READ);
 		Model mod = set.getDefaultModel();
 		System.out.println(mod.size());
-		
-        Query query = QueryFactory.create(""
-        		+ "PREFIX avi: <http://awesemantic.com/property/>"        		        	
-        		+ "PREFIX avires: <http://awesemantic.com/resource/>"
-        		+ "SELECT ?pred ?subject WHERE {"
-        		+ "avires:SK263 ?pred ?subject ."
-        		+ "}");
-        
-        QueryExecution queryExecution = QueryExecutionFactory.create(query, set);
-        
-        ResultSet res = queryExecution.execSelect();
-        System.out.println("out");
-        while (res.hasNext()){
-        	System.out.println(res.next().toString());
-        }
-		
-		
+
+		Query query = QueryFactory.create(""
+				+ "PREFIX avi: <http://awesemantic.com/property/>"        		        	
+				+ "PREFIX avires: <http://awesemantic.com/resource/>"
+				+ "SELECT ?pred ?subject WHERE {"
+				+ "avires:SK263 ?pred ?subject ."
+				+ "}");
+
+		QueryExecution queryExecution = QueryExecutionFactory.create(query, set);
+
+		ResultSet res = queryExecution.execSelect();
+		System.out.println("out");
+		while (res.hasNext()){
+			System.out.println(res.next().toString());
+		}
+
+
 		set.end();
 
 		timeEnd = System.currentTimeMillis() - time;
