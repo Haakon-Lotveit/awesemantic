@@ -27,9 +27,13 @@ public class XmlSingle {
 				String airport = iata.get(round).get(i); 
 				File f = new File("xml/xmlA/" + iata.get(round).get(i)+ "A.xml");
 				File f2 = new File("xml/xmlD/" + iata.get(round).get(i)+ "D.xml");
-				xmlQueue.add(f);
-				xmlQueue.add(f2);
-
+				// Adding the files to list used to keep track of downloaded xmls
+				if(!xmlQueue.contains(f)) {
+					xmlQueue.add(f);
+				}
+				if(!xmlQueue.contains(f2)){
+					xmlQueue.add(f2);
+				}
 				if(f.isFile()|f2.isFile()){
 
 				}
@@ -105,7 +109,7 @@ public class XmlSingle {
 					long endTime = System.nanoTime();
 
 					long duration = endTime - startTime;
-//					System.out.println(duration);
+					//					System.out.println(duration);
 				}
 			}
 		}

@@ -14,27 +14,28 @@ import com.hp.hpl.jena.rdf.model.Model;
 public class SemanticFlight {
 
 	public static void main(String[] args){
+		
 		long time = System.currentTimeMillis();
-		//create an instance
 		XmlSingle single = new XmlSingle();
 		ArrayList<ArrayList<String>> li = new ArrayList<ArrayList<String>>();
 		ArrayList<String> fly = new ArrayList<String>();
 		fly.add("BGO");
 		li.add(fly);
 
+		// Downloads all airports connected to airports in li.
 		single.connections(li, 0, 5);
 		Queue<File> ls = single.getXmlQueue();
 		//		while(ls.peek() != null) {
 		//			System.out.println(ls.poll().getPath());
 		//		}
 		long timeEnd = System.currentTimeMillis() - time;
-		System.out.println("Downloading xml took: " + timeEnd/1000 );
+		System.out.println("Downloading xml took: " + timeEnd/1000 + " Flights: " + ls.size());
 		time = System.currentTimeMillis();
 
 		//call run example
 		System.out.println("semParser");
 		SemanticXMLParser dpe = new SemanticXMLParser();
-		RDFLoader rdfLoader = new RDFLoader();
+		TDBwrapper rdfLoader = new TDBwrapper();
 		try {
 			while(ls.peek() != null) {
 				File xmlFile = ls.poll();

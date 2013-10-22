@@ -40,11 +40,12 @@ import com.hp.hpl.jena.vocabulary.VCARD;
 /**
  * 
  * @author ken
+ * All communication with TDB should go true this. Maybe add a interface for modularity?
  *
  */
-public class RDFLoader extends Object {
+public class TDBwrapper extends Object {
 
-	public RDFLoader() {
+	public TDBwrapper() {
 
 	}
 
@@ -169,12 +170,7 @@ public class RDFLoader extends Object {
 		for(int i = 0; i < flights.size() ; i++) {
 			Flight f = flights.get(i);						
 			
-//			Resource flightRes  = model.createResource(resourceURI + f.getFlight_id())
-//		             .addProperty(hasFlightID, f.getFlight_id())
-//		             .addProperty(scheduledTime, f.getScheduledTime())
-//		             .addProperty(arrivingORDeparting, f.getArrOrDep())
-//		             .addProperty(airline, f.getAirline());
-//			System.out.println(f.getArrOrDep());
+			// Makes sure the airports has correct direction
 			if(f.getArrOrDep().equals("A")) {
 				Resource flightRes  = model.createResource(resourceURI + f.getFlight_id())
 			             .addProperty(hasFlightID, f.getFlight_id())
