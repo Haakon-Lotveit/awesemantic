@@ -51,14 +51,6 @@ public class TDBwrapper extends Object {
 
 	public void loadAirportsDbpedia () {
 
-		//		String queryString =
-		//				"PREFIX dbo: <http://dbpedia.org/ontology/>" +
-		//
-		//						"CONSTRUCT {?airports dbo:iataLocationIdentifier ?iata} WHERE {" +
-		//
-		//						"?airports dbo:iataLocationIdentifier ?iata ." +												
-		//
-		//						"}";
 		String sparqlUpdateString = "" +
 				"PREFIX dbo: <http://dbpedia.org/ontology/>" +
 
@@ -78,11 +70,7 @@ public class TDBwrapper extends Object {
 		Model model = store.getModel();
 		System.out.println(model.size());
 		dataset.begin(ReadWrite.WRITE) ;
-//		Query query = QueryFactory.create(queryString);
 
-		// Execute the query and obtain results
-//		QueryExecution qe = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", query);
-//		model = qe.execConstruct();
 		
 		try {
 		 GraphStore graphStore = GraphStoreFactory.create(dataset) ;
@@ -98,9 +86,7 @@ public class TDBwrapper extends Object {
 		System.out.println(dataset.getDefaultModel().size());
 //		dataset = DatasetFactory.create(model);
 		dataset.commit();
-//		dataset.end() ; 
-		
-//			dataset.commit() ;
+
 		} finally { 
 			dataset.end() ; 
 		}
@@ -113,34 +99,13 @@ public class TDBwrapper extends Object {
 				"?airports dbo:iataLocationIdentifier ?iata ." +
 				"}LIMIT 10");
 
-//		QueryExecution queryExecution = QueryExecutionFactory.create(query2, dataset);
-//
-//		ResultSet res = queryExecution.execSelect();
-//
-//		while (res.hasNext()){
-//			System.out.println(res.next().toString());
-//		}
 
-//		dataset.begin(ReadWrite.WRITE) ;
-
-
-//		model.close();
-//		dataset.close();
-//
 		StoreRDF s = StoreRDF.create();
 		Dataset set = s.getDataset();
 		set.begin(ReadWrite.READ);
 		System.out.println(set.getDefaultModel().size());
 		set.end();
-//
-//		queryExecution = QueryExecutionFactory.create(query2, set);
-//
-//		res = queryExecution.execSelect();
-//
-//		while (res.hasNext()){
-//			System.out.println(res.next().toString());
-//		}
-//		dataset.close();
+
 	}
 
 	public void writeFlightsToTDB(List<Flight> flights) {
@@ -156,8 +121,9 @@ public class TDBwrapper extends Object {
 		
 		// Write properties
 		Property hasFlightID = model.createProperty(propertyURI + "hasFlightID");
-		Property scheduledTime = model.createProperty(propertyURI + "schedueledTime"); 
-		Property arrivingORDeparting = model.createProperty(propertyURI + "arrivingOrDeparting");
+		Property scheduledArrivalTime = model.createProperty(propertyURI + "schedueledArrivalTime");
+		Property scheduledDepartureTime = model.createProperty(propertyURI + "schedueledDepartureTime");
+//		Property arrivingORDeparting = model.createProperty(propertyURI + "arrivingOrDeparting");
 		Property airline = model.createProperty(propertyURI + "airline");
 		// To or from according to XML, not originating xml. Add arrOrDepValue after airport
 		Property arrivingAirport = model.createProperty(propertyURI + "arrivingAirport");
@@ -165,6 +131,7 @@ public class TDBwrapper extends Object {
 		// Create anonymous node if exists
 		Property statusCode = model.createProperty(propertyURI + "statusCode");
 		Property statusTime = model.createProperty(propertyURI + "statusTime");
+		Property statusParent = model.createProperty(propertyURI + "statusParent");
 		
 		
 		for(int i = 0; i < flights.size() ; i++) {
@@ -174,27 +141,27 @@ public class TDBwrapper extends Object {
 			if(f.getArrOrDep().equals("A")) {
 				Resource flightRes  = model.createResource(resourceURI + f.getFlight_id())
 			             .addProperty(hasFlightID, f.getFlight_id())
-			             .addProperty(scheduledTime, f.getScheduledTime())
-			             .addProperty(arrivingORDeparting, f.getArrOrDep())
+			             .addProperty(scheduledArrivalTime, f.getScheduledTime())
+//			             .addProperty(arrivingORDeparting, f.getArrOrDep())
 			             .addProperty(airline, f.getAirline())
-			             .addProperty(arrivingAirport, f.getAirport())
-			             .addProperty(VCARD.N, 
-			            		 model.createResource()
+			             .addProperty(departingAirport, f.getAirport())
+//			             .addProperty(statusParent, 
+//			            		 model.createResource()
 			            		 .addProperty(statusCode, f.getStatusCode())
-			            		 .addLiteral(statusTime, f.getStatusTime()));
+			            		 .addLiteral(statusTime, f.getStatusTime());
 			}
 			
 			if(f.getArrOrDep().equals("D")) {
 				Resource flightRes  = model.createResource(resourceURI + f.getFlight_id())
 			             .addProperty(hasFlightID, f.getFlight_id())
-			             .addProperty(scheduledTime, f.getScheduledTime())
-			             .addProperty(arrivingORDeparting, f.getArrOrDep())
+			             .addProperty(scheduledDepartureTime, f.getScheduledTime())
+//			             .addProperty(arrivingORDeparting, f.getArrOrDep())
 			             .addProperty(airline, f.getAirline())
-			             .addProperty(departingAirport, f.getAirport())
-			             .addProperty(VCARD.N, 
-			            		 model.createResource()
+			             .addProperty(arrivingAirport, f.getAirport())
+//			             .addProperty(statusParent, 
+//			            		 model.createResource(resourceURI+"statusParent"+f.getFlight_id())
 			            		 .addProperty(statusCode, f.getStatusCode())
-			            		 .addLiteral(statusTime, f.getStatusTime()));
+			            		 .addLiteral(statusTime, f.getStatusTime());
 			}
 				
 		}

@@ -8,7 +8,12 @@ import java.util.Queue;
 import no.uib.semanticweb.semanticflight.rdfstore.StoreRDF;
 
 import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ReadWrite;
+import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
 
 public class SemanticFlight {
@@ -29,7 +34,7 @@ public class SemanticFlight {
 		//			System.out.println(ls.poll().getPath());
 		//		}
 		long timeEnd = System.currentTimeMillis() - time;
-		System.out.println("Downloading xml took: " + timeEnd/1000 + " Flights: " + ls.size());
+		System.out.println("Downloading xml took: " + timeEnd/1000 + " XMLs: " + ls.size());
 		time = System.currentTimeMillis();
 
 		//call run example
@@ -61,7 +66,23 @@ public class SemanticFlight {
 		set.begin(ReadWrite.READ);
 		Model mod = set.getDefaultModel();
 		System.out.println(mod.size());
-		//		mod.write(System.out, "TURTLE");
+		
+        Query query = QueryFactory.create(""
+        		+ "PREFIX avi: <http://awesemantic.com/property/>"        		        	
+        		+ "PREFIX avires: <http://awesemantic.com/resource/>"
+        		+ "SELECT ?pred ?subject WHERE {"
+        		+ "avires:SK263 ?pred ?subject ."
+        		+ "}");
+        
+        QueryExecution queryExecution = QueryExecutionFactory.create(query, set);
+        
+        ResultSet res = queryExecution.execSelect();
+        System.out.println("out");
+        while (res.hasNext()){
+        	System.out.println(res.next().toString());
+        }
+		
+		
 		set.end();
 
 		timeEnd = System.currentTimeMillis() - time;
