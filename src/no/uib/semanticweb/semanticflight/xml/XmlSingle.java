@@ -1,4 +1,4 @@
-package no.uib.semanticweb.semanticflight;
+package no.uib.semanticweb.semanticflight.xml;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

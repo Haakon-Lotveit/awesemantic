@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package no.uib.semanticweb.semanticflight ;
+package no.uib.semanticweb.semanticflight.rdfstore ;
 
 import java.util.List;
 
-import no.uib.semanticweb.semanticflight.rdfstore.StoreRDF;
+import no.uib.semanticweb.semanticflight.Flight;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
@@ -64,7 +64,7 @@ public class TDBwrapper extends Object {
 
 
 		// Haakon: StoreRDF er en enkel wrapper. Akkurat nå gjør den ikke så mye annet enn å la deg skrive litegranne mindre.
-		StoreRDF store = StoreRDF.create();
+		TDBconnections store = TDBconnections.create();
 
 		Dataset dataset = store.getDataset();
 		Model model = store.getModel();
@@ -100,7 +100,7 @@ public class TDBwrapper extends Object {
 				"}LIMIT 10");
 
 
-		StoreRDF s = StoreRDF.create();
+		TDBconnections s = TDBconnections.create();
 		Dataset set = s.getDataset();
 		set.begin(ReadWrite.READ);
 		System.out.println(set.getDefaultModel().size());
@@ -113,7 +113,7 @@ public class TDBwrapper extends Object {
 		String propertyURI = "http://awesemantic.com/properties/";
 		String resourceURI = "http://awesemantic.com/resource/";
 		
-		StoreRDF store = StoreRDF.create();
+		TDBconnections store = TDBconnections.create();
 		Dataset dataset = store.getDataset();
 		dataset.begin(ReadWrite.WRITE) ;
 		Model model = store.getModel();

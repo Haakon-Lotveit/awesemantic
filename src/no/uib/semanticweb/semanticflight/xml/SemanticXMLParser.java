@@ -1,4 +1,4 @@
-package no.uib.semanticweb.semanticflight;
+package no.uib.semanticweb.semanticflight.xml;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +8,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import no.uib.semanticweb.semanticflight.Flight;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

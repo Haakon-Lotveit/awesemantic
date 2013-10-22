@@ -6,7 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 
-import no.uib.semanticweb.semanticflight.rdfstore.StoreRDF;
+import no.uib.semanticweb.semanticflight.rdfstore.TDBconnections;
+import no.uib.semanticweb.semanticflight.rdfstore.TDBwrapper;
+import no.uib.semanticweb.semanticflight.xml.SemanticXMLParser;
+import no.uib.semanticweb.semanticflight.xml.XmlSingle;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
@@ -73,7 +76,7 @@ public class SemanticFlight {
 		time = System.currentTimeMillis();
 
 		System.out.println("sjekk om persistent");
-		StoreRDF s = StoreRDF.create();
+		TDBconnections s = TDBconnections.create();
 		Dataset set = s.getDataset();
 		set.begin(ReadWrite.READ);
 		Model mod = set.getDefaultModel();

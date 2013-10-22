@@ -14,17 +14,17 @@ import com.hp.hpl.jena.tdb.TDBFactory;
  * @author haakon
  *
  */
-public class StoreRDF {
+public class TDBconnections {
 	// Private deler
 	private Dataset ds = null;
 	
 	// konstruktør
-	private StoreRDF(String location){
+	private TDBconnections(String location){
 		this.ds = TDBFactory.createDataset(location);
 	}
 	
 	// statiske metoder for å lage storeRDF objekter
-	public static StoreRDF create() {
+	public static TDBconnections create() {
 		Ini ini = null;
 		try {
 			ini = new Ini(new File("Settings.ini"));			
@@ -51,10 +51,10 @@ public class StoreRDF {
 		if(!(loc.exists())){
 			loc.mkdirs();
 		}
-		return new StoreRDF(location);
+		return new TDBconnections(location);
 	}
-	public static StoreRDF create(String location){
-		return new StoreRDF(location);
+	public static TDBconnections create(String location){
+		return new TDBconnections(location);
 	}
 	
 	public Model getModel(){
