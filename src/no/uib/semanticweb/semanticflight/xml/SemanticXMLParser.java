@@ -16,6 +16,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+/**
+ * Parse xml and create Flight objects representing them.
+ * @author ken
+ *
+ */
 public class SemanticXMLParser {
 
 	//No generics
@@ -28,7 +33,7 @@ public class SemanticXMLParser {
 		flights = new ArrayList<Flight>();
 	}
 
-	public void runExample(String fileURI) {
+	public void parse(String fileURI) {
 
 		//parse the xml file and get the dom object
 		parseXmlFile(fileURI);
@@ -89,26 +94,26 @@ public class SemanticXMLParser {
 
 
 	/**
-	 * I take an employee element and read the values in, create
-	 * an Employee object and return it
-	 * @param empEl
+	 * I take an flight element and read the values in, create
+	 * an Flight object and return it
+	 * @param flightEl
 	 * @return
 	 */
-	private Flight getFlight(Element empEl) {
+	private Flight getFlight(Element flightEl) {
 
 		//for each <employee> element get text or int values of 
 		//name ,id, age and name
-		String airline = getTextValue(empEl,"airline");
-		String flightID = getTextValue(empEl, "flight_id");
-		String scheduledTime = getTextValue(empEl,"schedule_time");
-		String arrOrDep = getTextValue(empEl,"arr_dep");
-		String airport = getTextValue(empEl, "airport");
+		String airline = getTextValue(flightEl,"airline");
+		String flightID = getTextValue(flightEl, "flight_id");
+		String scheduledTime = getTextValue(flightEl,"schedule_time");
+		String arrOrDep = getTextValue(flightEl,"arr_dep");
+		String airport = getTextValue(flightEl, "airport");
 
 		String statusCode = "";
 		String statusTime = "";
 		//		System.out.println(getTextValue(empEl, "status"));
 
-		NodeList nl = empEl.getElementsByTagName("status");
+		NodeList nl = flightEl.getElementsByTagName("status");
 		//		System.out.println(nl.item(0).getAttributes());
 		//		NamedNodeMap attributes = nl.item(0).getAttributes();
 		//		attributes.item(0).get

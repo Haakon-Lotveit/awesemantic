@@ -25,57 +25,29 @@ public class SemanticFlight {
 	public static void main(String[] args){
 
 		long time = System.currentTimeMillis();
-		XmlSingle single = new XmlSingle();
-		ArrayList<ArrayList<String>> li = new ArrayList<ArrayList<String>>();
-		ArrayList<String> fly = new ArrayList<String>();
 
-		String[] avinorAirPorts = {"AES","KSU","NVK","FBU","OSL","BVG","BOO","MQN",
-				"MJF","OSY","SDN","ALF","ANX","BJF","BDU","BNN",
-				"FDE","VDB","FRO","HFT","EVE","HAU","HVG","KKN",
-				"KRS","LKL","LKN","MEH","MOL","RRS","RVK","RET",
-				"SOJ","SSJ","SOG","SKN","LYR","SVJ","TOS","TRD",
-				"VRY","VDS","VAW","HOV","BGO","HAA","SVG"};
-		List<String> aviList = Arrays.asList(avinorAirPorts);
+		Queue<File> xmlFileQueue = pullAvinorXML();
 
-		for(int i = 0 ; i < aviList.size() ; i++) {
-			fly.add(aviList.get(i));
-			li.add(fly);
-
-			// Downloads all airports connected to airports in li.
-			single.connections(li, 0, 5);
-		}
-		Queue<File> ls = single.getXmlQueue();
-		//		while(ls.peek() != null) {
-		//			System.out.println(ls.poll().getPath());
-		//		}
-		long timeEnd = System.currentTimeMillis() - time;
-		System.out.println("Downloading xml took: " + timeEnd/1000 + " XMLs: " + ls.size());
+		long timeEnd = System.currentTimeMillis() - time;		
+		System.out.println("Downloading xml took: " + timeEnd/1000 + " XMLs: " + xmlFileQueue.size());
 		time = System.currentTimeMillis();
 
-		//call run example
-		System.out.println("semParser");
-		SemanticXMLParser dpe = new SemanticXMLParser();
-		TDBwrapper rdfLoader = new TDBwrapper();
-		try {
-			while(ls.peek() != null) {
-				File xmlFile = ls.poll();
-				dpe.runExample(xmlFile.getPath());
-				List<Flight> flights = dpe.getFlights();
-				// Write flight objects to tdb
-				rdfLoader.writeFlightsToTDB(flights);
-				if(xmlFile.delete()){
-					System.out.println("deleted xmlFile");
-				}
-			}
-			timeEnd = System.currentTimeMillis() - time;
-			System.out.println("Parsing took: " + timeEnd/1000);
-		}catch(Exception e) {
-			e.printStackTrace();
-			//				rdfLoader.writeFlightsToTDB(flights);
-		}
+		// Parse XML and then persist triples
+		parseAndPersistXMLQueue(xmlFileQueue);
+		timeEnd = System.currentTimeMillis() - time;
+		System.out.println("Parsing took: " + timeEnd/1000);		
 		time = System.currentTimeMillis();
 
+		debugQuerys();
 		System.out.println("sjekk om persistent");
+
+		timeEnd = System.currentTimeMillis() - time;
+		System.out.println("Loading model took: " + timeEnd/1000);
+
+		//		rdfLoader.loadAirportsDbpedia();
+	}
+
+	private static void debugQuerys() {
 		TDBconnections s = TDBconnections.create();
 		Dataset set = s.getDataset();
 		set.begin(ReadWrite.READ);
@@ -97,13 +69,61 @@ public class SemanticFlight {
 			System.out.println(res.next().toString());
 		}
 
-
 		set.end();
 
-		timeEnd = System.currentTimeMillis() - time;
-		System.out.println("Loading model took: " + timeEnd/1000);
+	}
 
-		//		rdfLoader.loadAirportsDbpedia();
+	/**
+	 * Takes a list of xml-files, parse them and persist the resulting triples
+	 * @param xmlFileQueue
+	 */
+	private static void parseAndPersistXMLQueue(Queue<File> xmlFileQueue) {
+		SemanticXMLParser dpe = new SemanticXMLParser();
+		TDBwrapper rdfLoader = new TDBwrapper();
+		try {
+			while(xmlFileQueue.peek() != null) {
+				File xmlFile = xmlFileQueue.poll();
+				dpe.parse(xmlFile.getPath());
+				List<Flight> flights = dpe.getFlights();
+				// Write flight objects to tdb
+				rdfLoader.writeFlightsToTDB(flights);
+				if(xmlFile.delete()){
+					System.out.println("deleted xmlFile");
+				}
+			}
+
+		}catch(Exception e) {
+			e.printStackTrace();
+			//				rdfLoader.writeFlightsToTDB(flights);
+		}
+
+	}
+
+	/**
+	 * Pulls xmls from all airports connecting to avinor airports
+	 * @return Queue<File> queue
+	 */
+	private static Queue<File> pullAvinorXML() {
+		XmlSingle single = new XmlSingle();
+		ArrayList<ArrayList<String>> li = new ArrayList<ArrayList<String>>();
+		ArrayList<String> fly = new ArrayList<String>();
+
+		String[] avinorAirPorts = {"AES","KSU","NVK","FBU","OSL","BVG","BOO","MQN",
+				"MJF","OSY","SDN","ALF","ANX","BJF","BDU","BNN",
+				"FDE","VDB","FRO","HFT","EVE","HAU","HVG","KKN",
+				"KRS","LKL","LKN","MEH","MOL","RRS","RVK","RET",
+				"SOJ","SSJ","SOG","SKN","LYR","SVJ","TOS","TRD",
+				"VRY","VDS","VAW","HOV","BGO","HAA","SVG"};
+		List<String> aviList = Arrays.asList(avinorAirPorts);
+
+		for(int i = 0 ; i < aviList.size() ; i++) {
+			fly.add(aviList.get(i));
+			li.add(fly);
+
+			// Downloads all airports connected to airports in li.
+			single.connections(li, 0, 5);
+		}
+		return single.getXmlQueue();
 	}
 
 }
