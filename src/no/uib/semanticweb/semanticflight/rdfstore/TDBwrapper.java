@@ -108,6 +108,12 @@ public class TDBwrapper extends Object {
 
 	}
 
+	/**
+	 * Purges model before writing new triples.
+	 * Makes sure no bloating of TDB because of old triples
+	 * All in one transaction
+	 * @param flights
+	 */
 	public void writeFlightsToTDB(List<Flight> flights) {
 		
 		String propertyURI = "http://awesemantic.com/properties/";
@@ -117,7 +123,8 @@ public class TDBwrapper extends Object {
 		Dataset dataset = store.getDataset();
 		dataset.begin(ReadWrite.WRITE) ;
 		Model model = store.getModel();
-//		System.out.println(model.size());
+		// Removes all triples from model.
+		model.removeAll();
 		
 		// Write properties
 		Property hasFlightID = model.createProperty(propertyURI + "hasFlightID");

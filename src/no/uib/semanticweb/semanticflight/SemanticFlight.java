@@ -58,7 +58,7 @@ public class SemanticFlight {
 		
 		// Third argument in scheduledAtFixedRate define run-time
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-		executor.scheduleAtFixedRate(semanticRunnable, 0, 30, TimeUnit.SECONDS);
+		executor.scheduleAtFixedRate(semanticRunnable, 0, 40, TimeUnit.SECONDS);
 		
 	}
 
