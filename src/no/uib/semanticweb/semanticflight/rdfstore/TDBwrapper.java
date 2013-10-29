@@ -40,7 +40,7 @@ import com.hp.hpl.jena.vocabulary.VCARD;
 /**
  * 
  * @author ken
- * All communication with TDB should go true this. Maybe add a interface for modularity?
+ * All communication with TDB should go through this. Maybe add a interface for modularity?
  *
  */
 public class TDBwrapper extends Object {
@@ -117,7 +117,7 @@ public class TDBwrapper extends Object {
 		Dataset dataset = store.getDataset();
 		dataset.begin(ReadWrite.WRITE) ;
 		Model model = store.getModel();
-		System.out.println(model.size());
+//		System.out.println(model.size());
 		
 		// Write properties
 		Property hasFlightID = model.createProperty(propertyURI + "hasFlightID");
