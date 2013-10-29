@@ -1,6 +1,8 @@
 package no.uib.semanticweb.semanticflight;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,8 +48,8 @@ public class SemanticFlight {
 				System.out.println("Parsing took: " + timeEnd/1000);		
 				time = System.currentTimeMillis();
 
-				debugQuerys();
-				System.out.println("sjekk om persistent");
+				debugQuerys();				
+//				backupTriples();
 
 				timeEnd = System.currentTimeMillis() - time;
 				System.out.println("Loading model took: " + timeEnd/1000);
@@ -57,6 +59,7 @@ public class SemanticFlight {
 		};
 		
 		// Third argument in scheduledAtFixedRate define run-time
+		// TODO put scheduled time in ini-file
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		executor.scheduleAtFixedRate(semanticRunnable, 0, 40, TimeUnit.SECONDS);
 		
@@ -139,6 +142,24 @@ public class SemanticFlight {
 			single.connections(li, 0, 5);
 		}
 		return single.getXmlQueue();
+	}
+	
+
+	/**
+	 * Writes triples to file for validation or backup.
+	 */
+	private static void backupTriples() {
+		TDBconnections s = TDBconnections.create();
+		Dataset set = s.getDataset();
+		set.begin(ReadWrite.READ);
+		Model model = set.getDefaultModel();
+		try {
+			model.write(new FileOutputStream(new File("backup.rdf")));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		set.end();
 	}
 
 }

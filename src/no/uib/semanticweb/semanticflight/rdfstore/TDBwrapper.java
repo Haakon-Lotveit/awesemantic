@@ -136,8 +136,10 @@ public class TDBwrapper extends Object {
 		Property arrivingAirport = model.createProperty(propertyURI + "arrivingAirport");
 		Property departingAirport = model.createProperty(propertyURI + "departingAirport");
 		// Create anonymous node if exists
-		Property statusCode = model.createProperty(propertyURI + "statusCode");
-		Property statusTime = model.createProperty(propertyURI + "statusTime");
+		Property statusCodeA = model.createProperty(propertyURI + "statusCodeA");
+		Property statusTimeA = model.createProperty(propertyURI + "statusTimeA");
+		Property statusCodeD = model.createProperty(propertyURI + "statusCodeD");
+		Property statusTimeD = model.createProperty(propertyURI + "statusTimeD");
 		Property statusParent = model.createProperty(propertyURI + "statusParent");
 		
 		
@@ -154,8 +156,8 @@ public class TDBwrapper extends Object {
 			             .addProperty(departingAirport, f.getAirport())
 //			             .addProperty(statusParent, 
 //			            		 model.createResource()
-			            		 .addProperty(statusCode, f.getStatusCode())
-			            		 .addLiteral(statusTime, f.getStatusTime());
+			            		 .addProperty(statusCodeA, f.getStatusCode())
+			            		 .addLiteral(statusTimeA, f.getStatusTime());
 			}
 			
 			if(f.getArrOrDep().equals("D")) {
@@ -167,8 +169,8 @@ public class TDBwrapper extends Object {
 			             .addProperty(arrivingAirport, f.getAirport())
 //			             .addProperty(statusParent, 
 //			            		 model.createResource(resourceURI+"statusParent"+f.getFlight_id())
-			            		 .addProperty(statusCode, f.getStatusCode())
-			            		 .addLiteral(statusTime, f.getStatusTime());
+			            		 .addProperty(statusCodeD, f.getStatusCode())
+			            		 .addLiteral(statusTimeD, f.getStatusTime());
 			}
 				
 		}
