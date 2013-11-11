@@ -28,7 +28,8 @@ public class XmlSingle {
 				File f = new File("xml/xmlA/" + iata.get(round).get(i)+ "A.xml");
 				File f2 = new File("xml/xmlD/" + iata.get(round).get(i)+ "D.xml");
 				// Adding the files to list used to keep track of downloaded xmls
-				// TODO: Dette er O(n). Bruk av en hashmap ville fått ned til gjennomsnittslig O(1).
+				// TODO: Dette er O(n²). Bruk av en hashmap ville fått ned til gjennomsnittslig O(1).
+				// Dersom det er få her, så er det ikke noe vits i.
 				if(!xmlQueue.contains(f)) {
 					xmlQueue.add(f);
 				}
