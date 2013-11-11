@@ -28,6 +28,7 @@ public class XmlSingle {
 				File f = new File("xml/xmlA/" + iata.get(round).get(i)+ "A.xml");
 				File f2 = new File("xml/xmlD/" + iata.get(round).get(i)+ "D.xml");
 				// Adding the files to list used to keep track of downloaded xmls
+				// TODO: Dette er O(n). Bruk av en hashmap ville fått ned til gjennomsnittslig O(1).
 				if(!xmlQueue.contains(f)) {
 					xmlQueue.add(f);
 				}
@@ -42,7 +43,13 @@ public class XmlSingle {
 					try {
 						url = new URL("http://flydata.avinor.no/XmlFeed.asp?airport="+ airport + "&direction=A");
 						Scanner s = new Scanner(url.openStream());
-						BufferedWriter writer = new BufferedWriter(new FileWriter("xml/xmlA/" + airport+ "A.xml"));
+						File outfile = new File("xml/xmlA/" + airport+ "A.xml");
+						if(!outfile.exists()){
+							System.err.printf("Filen \"%s\" finnes ikke.%nTODO: Fiks slik at den blir laget automatisk om den ikke finnes.%n",
+											  outfile.getAbsolutePath());
+							System.exit(1);
+						}
+						BufferedWriter writer = new BufferedWriter(new FileWriter(outfile));
 						while(s.hasNext()){
 							writer.append(s.nextLine());
 							writer.newLine();
@@ -69,7 +76,8 @@ public class XmlSingle {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-
+					
+					// TODO: Dette kan gjøres på en linje med Scanner.
 					BufferedReader reader;
 					try {
 						reader = new BufferedReader(new FileReader("xml/xmlD/" + airport+ "D.xml"));
