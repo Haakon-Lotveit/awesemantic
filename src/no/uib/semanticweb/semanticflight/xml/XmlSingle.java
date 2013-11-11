@@ -23,13 +23,11 @@ public class XmlSingle {
 
 		}else{
 			for(int i = 0; i< iata.get(round).size(); i++){
-				long startTime = System.nanoTime();
+//				long startTime = System.nanoTime();
 				String airport = iata.get(round).get(i); 
 				File f = new File("xml/xmlA/" + iata.get(round).get(i)+ "A.xml");
 				File f2 = new File("xml/xmlD/" + iata.get(round).get(i)+ "D.xml");
 				// Adding the files to list used to keep track of downloaded xmls
-				// TODO: Dette er O(n²). Bruk av en hashmap ville fått ned til gjennomsnittslig O(1).
-				// Dersom det er få her, så er det ikke noe vits i. –Haakon
 				if(!xmlQueue.contains(f)) {
 					xmlQueue.add(f);
 				}
@@ -82,6 +80,7 @@ public class XmlSingle {
 //					Scanner s = new Scanner(filnavn).useDelimiter("\\Z").next();
 //					String xml = s.next();
 //					s.close();
+
 					BufferedReader reader;
 					try {
 						reader = new BufferedReader(new FileReader("xml/xmlD/" + airport+ "D.xml"));
@@ -118,9 +117,9 @@ public class XmlSingle {
 						e.printStackTrace();
 					}
 
-					long endTime = System.nanoTime();
+//					long endTime = System.nanoTime();
 
-					long duration = endTime - startTime;
+//					long duration = endTime - startTime;
 					//					System.out.println(duration);
 				}
 			}

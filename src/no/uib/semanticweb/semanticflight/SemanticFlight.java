@@ -1,9 +1,11 @@
 package no.uib.semanticweb.semanticflight;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import org.ini4j.InvalidFileFormatException;
 
 import no.uib.semanticweb.semanticflight.rdfstore.TDBconnections;
 import no.uib.semanticweb.semanticflight.rdfstore.TDBwrapper;
+import no.uib.semanticweb.semanticflight.verkty.FileIO;
 import no.uib.semanticweb.semanticflight.xml.SemanticXMLParser;
 import no.uib.semanticweb.semanticflight.xml.XmlSingle;
 
@@ -152,11 +155,34 @@ public class SemanticFlight {
 
 	private static void setup() {
 		createNewIni();
-		System.err.println("Automatic setup is not implemented yet.\nYell at the programmers until they fix it.");
+		createFolders();
 	}
 
+	/**
+	 * NB! Denne metoden er komplett avhengig av at Settings.ini eksisterer.
+	 */
+	private static void createFolders(){
+			Ini lookup;
+			try {
+				lookup = new Ini(SemanticFlight.getIniFile());
+				File arrivalsFolder = new File(lookup.get("XMLParse", "ArrivalsFolder"));
+				File departuresFolder = new File(lookup.get("XMLParse", "DeparturesFolder"));
+				boolean success = arrivalsFolder.mkdirs();
+				boolean great = departuresFolder.mkdirs();
+				boolean greatSuccess = great && success;
+				
+				System.out.printf("%s tried to create folders%n", greatSuccess? "Successfully":"Unsuccessfully");
+				
+			} catch (InvalidFileFormatException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+	}
 	private static void createNewIni(){
 		try{
+			boolean write = true;
 			File newIni = new File(SemanticFlight.getIniFile().getAbsolutePath());
 			if(newIni.exists()){
 				Scanner kb = new Scanner(System.in);
@@ -169,13 +195,14 @@ public class SemanticFlight {
 						case 'Y':
 						case 'y':
 							System.out.println("Deleting file and recreating standard");
-							System.out.println("newIni.delete();");
-							done = true;
-							// Lag ny inifil her.
+							newIni.delete();
+							done = true;							
 							break;
+							
 						case 'N':
 						case 'n':
 							System.out.println("Not creating new Settings.ini file");
+							write = false;
 							done = true;
 							break;
 						default:
@@ -185,8 +212,28 @@ public class SemanticFlight {
 				}
 				kb.close();
 			}
+			
+			if(write){
+				BufferedWriter writer = FileIO.getWriter(newIni);
+				writer.append("[StoreRDF]" + "\n");
+				writer.append("Location = tdb/flightSTORE" + "\n");
+				writer.append("\n");
+				writer.append("[XMLParse]" + "\n");
+				writer.append("ArrivalsFolder = xml/xmlA/" + "\n");
+				writer.append("ArrivalsFilenameSpec = %sA.xml" + "\n");
+				writer.append("DeparturesFolder = xml/xmlD/" + "\n");
+				writer.append("DepatruesFilenameSpec = %sD.xml" + "\n");
+				writer.append("\n");
+				writer.append("[Scrape]" + "\n");
+				writer.append("DelayTime = 40" + "\n");
+				writer.append("\n");
+				writer.close();
+			}
 		}
-		catch(Exception e){
+		catch(MalformedURLException e){
+			e.printStackTrace();
+		}
+		catch(IOException e){
 			e.printStackTrace();
 		}
 	}
@@ -273,18 +320,18 @@ public class SemanticFlight {
 	/**
 	 * Writes triples to file for validation or backup.
 	 */
-	private static void backupTriples() {
-		TDBconnections s = TDBconnections.create();
-		Dataset set = s.getDataset();
-		set.begin(ReadWrite.READ);
-		Model model = set.getDefaultModel();
-		try {
-			model.write(new FileOutputStream(new File("backup.rdf")));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		set.end();
-	}
+//	private static void backupTriples() {
+//		TDBconnections s = TDBconnections.create();
+//		Dataset set = s.getDataset();
+//		set.begin(ReadWrite.READ);
+//		Model model = set.getDefaultModel();
+//		try {
+//			model.write(new FileOutputStream(new File("backup.rdf")));
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		set.end();
+//	}
 
 }

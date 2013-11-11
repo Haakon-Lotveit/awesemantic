@@ -23,8 +23,6 @@ import java.util.List;
 import no.uib.semanticweb.semanticflight.Flight;
 
 import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -35,7 +33,6 @@ import com.hp.hpl.jena.update.UpdateExecutionFactory;
 import com.hp.hpl.jena.update.UpdateFactory;
 import com.hp.hpl.jena.update.UpdateProcessor;
 import com.hp.hpl.jena.update.UpdateRequest;
-import com.hp.hpl.jena.vocabulary.VCARD;
 
 /**
  * 
@@ -93,11 +90,11 @@ public class TDBwrapper extends Object {
 		//		model.write(System.out, "TURTLE");
 		//		ResultSetFormatter.out(System.out, results, query);
 
-		Query query2 = QueryFactory.create( "" +
-				"PREFIX dbo: <http://dbpedia.org/ontology/>" +
-				"SELECT ?airports ?iata WHERE {" +
-				"?airports dbo:iataLocationIdentifier ?iata ." +
-				"}LIMIT 10");
+//		Query query2 = QueryFactory.create( "" +
+//				"PREFIX dbo: <http://dbpedia.org/ontology/>" +
+//				"SELECT ?airports ?iata WHERE {" +
+//				"?airports dbo:iataLocationIdentifier ?iata ." +
+//				"}LIMIT 10");
 
 
 		TDBconnections s = TDBconnections.create();
