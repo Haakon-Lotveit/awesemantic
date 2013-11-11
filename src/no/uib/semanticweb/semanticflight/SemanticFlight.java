@@ -3,6 +3,7 @@ package no.uib.semanticweb.semanticflight;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ import java.util.Queue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.ini4j.Ini;
+import org.ini4j.InvalidFileFormatException;
 
 import no.uib.semanticweb.semanticflight.rdfstore.TDBconnections;
 import no.uib.semanticweb.semanticflight.rdfstore.TDBwrapper;
@@ -32,7 +36,7 @@ public class SemanticFlight {
 	public static File getIniFile(){
 		return INI_FILE;
 	}
-	
+
 	public static void main(String[] args){
 
 		if(args.length >= 1){
@@ -41,15 +45,22 @@ public class SemanticFlight {
 			}
 			else{
 				System.err.printf("Option %s not recognized.%nLegal values are:%n -s / --setup  -  Automatic setup for deployment.",
-							      args[0]);
+						args[0]);
 			}
 			System.exit(0);
 		}
-		validateEnvironment();
+		/*
+		 * Dersom vi ikke har alt vi trenger for å kjøre når vi starter,
+		 *  så krasjer vi med en gang, istedenfor å sløse med alles tid.
+		 */
+		if(!validateEnvironment()){
+			System.exit(1);
+		}
+
 		
 		Runnable semanticRunnable = new Runnable() {
 			public void run() {
-				
+
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 				Calendar cal = Calendar.getInstance();
 				System.out.println(dateFormat.format(cal.getTime()));
@@ -69,7 +80,7 @@ public class SemanticFlight {
 				time = System.currentTimeMillis();
 
 				debugQuerys();				
-//				backupTriples();
+				//				backupTriples();
 
 				timeEnd = System.currentTimeMillis() - time;
 				System.out.println("Loading model took: " + timeEnd/1000);
@@ -77,12 +88,12 @@ public class SemanticFlight {
 				//		rdfLoader.loadAirportsDbpedia();
 			}
 		};
-		
+
 		// Third argument in scheduledAtFixedRate define run-time
 		// TODO put scheduled time in ini-file
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		executor.scheduleAtFixedRate(semanticRunnable, 0, 40, TimeUnit.SECONDS);
-		
+
 	}
 
 	/**
@@ -91,6 +102,8 @@ public class SemanticFlight {
 	 * Sjekker om alle mapper og filer som må være tilstede er tilstede.
 	 * Skriver informative feilmeldinger dersom filer/mapper mangler.
 	 * @return false dersom de ikke er det, true dersom de er det.
+	 * TODO: Sjekke at alle mappene er der. (Nå sjekker den kun at xml/xmlA og xml/xmlB er der.
+	 * TODO: La resten av koden bruke INI-filen, slik at sjekken faktisk blir nyttig.	
 	 */
 	private static boolean validateEnvironment() {
 		boolean validity = true;
@@ -101,7 +114,38 @@ public class SemanticFlight {
 			/* Hvis vi ikke har ini filen kan vi ikke sjekke mapper, etc. Derfor returnerer vi med en gang.*/
 			return false;
 		}
-		return validity;
+		Ini lookup;
+		try {
+			lookup = new Ini(SemanticFlight.getIniFile());
+
+			File arrivalsFolder = new File(lookup.get("XMLParse", "ArrivalsFolder"));
+			File departuresFolder = new File(lookup.get("XMLParse", "DeparturesFolder"));
+			if(!arrivalsFolder.exists() || !arrivalsFolder.isDirectory()){
+				validity = false;
+				System.err.printf(
+						"The folder %s does not exist.%nFor an automatic fix, run this program with the --setup option.%n",
+						arrivalsFolder.getAbsolutePath());
+			}
+			if(!departuresFolder.exists() || !departuresFolder.isDirectory()){
+				validity = false;
+				System.err.printf(
+						"The folder %s does not exist.%nFor an automatic fix, run this program with the --setup option.%n",
+						departuresFolder.getAbsolutePath());
+			}
+			return validity;		
+		}
+
+		/* Dersom noe går galt når vi leser Inifilen: */
+		catch (InvalidFileFormatException e) {			
+			System.err.println("Settings.ini er feilformatert.\nStacktrace:\n");
+			e.printStackTrace();
+			return false;
+		}
+		catch (IOException e) {
+			System.err.println("Kunne ikke lese Settings.ini.\nStacktrace:\n");
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	private static void setup() {
@@ -186,7 +230,7 @@ public class SemanticFlight {
 		}
 		return single.getXmlQueue();
 	}
-	
+
 
 	/**
 	 * Writes triples to file for validation or backup.

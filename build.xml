@@ -65,8 +65,8 @@
         <antcall target="build"/>
     </target>
 
-    <target name="createjar">
-      <jar destfile="${projectHome}/file.jar" basedir="${projectHome}/bin">
+    <target depends="build-project" name="jar" >
+      <jar destfile="${projectHome}/Awesemantic.jar" basedir="${projectHome}/bin">
 	<manifest>
           <attribute name="Main-Class" value="no.uib.semanticweb.semanticflight.SemanticFlight"/>
         </manifest>
