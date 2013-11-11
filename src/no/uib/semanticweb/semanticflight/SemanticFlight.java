@@ -26,7 +26,16 @@ import com.hp.hpl.jena.rdf.model.Model;
 public class SemanticFlight {
 
 	public static void main(String[] args){
-
+		if(args.length >= 1){
+			if(args[0].equals("--setup") || args[0].equals("-s")){
+				setup();
+			}
+			else{
+				System.err.printf("Option %s not recognized.%nLegal values are:%n -s / --setup  -  Automatic setup for deployment.",
+							      args[0]);
+			}
+			System.exit(0);
+		}
 		Runnable semanticRunnable = new Runnable() {
 			public void run() {
 				
@@ -63,6 +72,10 @@ public class SemanticFlight {
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		executor.scheduleAtFixedRate(semanticRunnable, 0, 40, TimeUnit.SECONDS);
 		
+	}
+
+	private static void setup() {
+		System.err.println("Automatic setup is not implemented yet.\nYell at the programmers until they fix it.");
 	}
 
 	private static void debugQuerys() {

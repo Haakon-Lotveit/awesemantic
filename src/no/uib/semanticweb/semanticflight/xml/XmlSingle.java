@@ -29,7 +29,7 @@ public class XmlSingle {
 				File f2 = new File("xml/xmlD/" + iata.get(round).get(i)+ "D.xml");
 				// Adding the files to list used to keep track of downloaded xmls
 				// TODO: Dette er O(n²). Bruk av en hashmap ville fått ned til gjennomsnittslig O(1).
-				// Dersom det er få her, så er det ikke noe vits i.
+				// Dersom det er få her, så er det ikke noe vits i. 
 				if(!xmlQueue.contains(f)) {
 					xmlQueue.add(f);
 				}
@@ -79,6 +79,9 @@ public class XmlSingle {
 					}
 					
 					// TODO: Dette kan gjøres på en linje med Scanner.
+//					Scanner s = new Scanner(filnavn).useDelimiter("\\Z").next();
+//					String xml = s.next();
+//					s.close();
 					BufferedReader reader;
 					try {
 						reader = new BufferedReader(new FileReader("xml/xmlD/" + airport+ "D.xml"));
