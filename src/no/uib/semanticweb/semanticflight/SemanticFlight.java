@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Queue;
+import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +45,8 @@ public class SemanticFlight {
 				setup();
 			}
 			else{
-				System.err.printf("Option %s not recognized.%nLegal values are:%n -s / --setup  -  Automatic setup for deployment.",
+				System.err.printf(
+						"Option %s not recognized.%nLegal values are:%n -s / --setup  -  Automatic setup for deployment.",
 						args[0]);
 			}
 			System.exit(0);
@@ -149,9 +151,45 @@ public class SemanticFlight {
 	}
 
 	private static void setup() {
+		createNewIni();
 		System.err.println("Automatic setup is not implemented yet.\nYell at the programmers until they fix it.");
 	}
 
+	private static void createNewIni(){
+		try{
+			File newIni = new File(SemanticFlight.getIniFile().getAbsolutePath());
+			if(newIni.exists()){
+				Scanner kb = new Scanner(System.in);
+				boolean done = false;
+				while(!done){
+					System.out.print("Settings.ini already exist. Delete and recreate? [Y/N]: ");
+					String answer = kb.nextLine();
+					if(answer.length() == 1){
+						switch(answer.charAt(0)){
+						case 'Y':
+						case 'y':
+							System.out.println("Deleting file and recreating standard");
+							System.out.println("newIni.delete();");
+							done = true;
+							// Lag ny inifil her.
+							break;
+						case 'N':
+						case 'n':
+							System.out.println("Not creating new Settings.ini file");
+							done = true;
+							break;
+						default:
+							System.out.println("Please answer either Y or N.");
+						}
+					}
+				}
+				kb.close();
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 	private static void debugQuerys() {
 		TDBconnections s = TDBconnections.create();
 		Dataset set = s.getDataset();
