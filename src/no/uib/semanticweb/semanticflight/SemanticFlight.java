@@ -24,8 +24,17 @@ import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
 
 public class SemanticFlight {
-
+	/**
+	 * Hvor vi forventer at inifilen skal ligge. Vi slipper unna med statisk variabel, siden den bare er på et sted.
+	 * Merk at vi må hardkode hvor minst en konfigurasjonsfil er, så vi bruker Settings.ini, og holder oss til at den må være et spesifikt sted.
+	 */
+	private static final File INI_FILE = new File("Settings.ini");
+	public static File getIniFile(){
+		return INI_FILE;
+	}
+	
 	public static void main(String[] args){
+
 		if(args.length >= 1){
 			if(args[0].equals("--setup") || args[0].equals("-s")){
 				setup();
@@ -36,6 +45,8 @@ public class SemanticFlight {
 			}
 			System.exit(0);
 		}
+		validateEnvironment();
+		
 		Runnable semanticRunnable = new Runnable() {
 			public void run() {
 				
@@ -72,6 +83,25 @@ public class SemanticFlight {
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		executor.scheduleAtFixedRate(semanticRunnable, 0, 40, TimeUnit.SECONDS);
 		
+	}
+
+	/**
+	 * @author Haakon Løtveit
+	 * (Ikke ferdig)
+	 * Sjekker om alle mapper og filer som må være tilstede er tilstede.
+	 * Skriver informative feilmeldinger dersom filer/mapper mangler.
+	 * @return false dersom de ikke er det, true dersom de er det.
+	 */
+	private static boolean validateEnvironment() {
+		boolean validity = true;
+		if(!SemanticFlight.INI_FILE.exists()){
+			System.err.printf(
+					"Ini file not found.%nExpected location: %s%nRun this program with the --setup option to recreate the standard Settings.ini.%n",
+					SemanticFlight.INI_FILE.getAbsolutePath());
+			/* Hvis vi ikke har ini filen kan vi ikke sjekke mapper, etc. Derfor returnerer vi med en gang.*/
+			return false;
+		}
+		return validity;
 	}
 
 	private static void setup() {
