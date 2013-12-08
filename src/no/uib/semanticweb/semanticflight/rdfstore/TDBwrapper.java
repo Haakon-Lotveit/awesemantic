@@ -156,7 +156,7 @@ public class TDBwrapper extends Object {
 //			             .addProperty(statusParent, 
 //			            		 model.createResource()
 			            		 .addProperty(statusCodeA, f.getStatusCode())
-			            		 .addLiteral(statusTimeA, f.getStatusTime());
+			            		 .addProperty(statusTimeA, f.getStatusTime());
 			}
 			
 			if(f.getArrOrDep().equals("D")) {
@@ -169,7 +169,7 @@ public class TDBwrapper extends Object {
 //			             .addProperty(statusParent, 
 //			            		 model.createResource(resourceURI+"statusParent"+f.getFlight_id())
 			            		 .addProperty(statusCodeD, f.getStatusCode())
-			            		 .addLiteral(statusTimeD, f.getStatusTime());
+			            		 .addProperty(statusTimeD, f.getStatusTime());
 			}
 				
 		}
