@@ -174,7 +174,7 @@ public class TDBwrapper extends Object {
 				
 		}
 		try {
-			model.write(new FileOutputStream("triples.rdf"), "TURTLE");
+			model.write(new FileOutputStream("triples.rdf"), "RDF/XML");
 		} catch (FileNotFoundException e) {
 			System.out.println("model.write failed!");
 			e.printStackTrace();
