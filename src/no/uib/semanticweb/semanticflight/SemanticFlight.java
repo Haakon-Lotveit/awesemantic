@@ -35,31 +35,34 @@ public class SemanticFlight {
 	 * Merk at vi må hardkode hvor minst en konfigurasjonsfil er, så vi bruker Settings.ini, og holder oss til at den må være et spesifikt sted.
 	 */
 	private static final File INI_FILE = new File("Settings.ini");
+	private static boolean runOnce = false;
 	public static File getIniFile(){
 		return INI_FILE;
 	}
 
 	public static void main(String[] args){
-		boolean runOnce = false;
+		
 		if(args.length >= 1){
 			if(args[0].equals("--setup") || args[0].equals("-s")){
 				setup();
 			}
 			else if (args[0].equals("--run-once")){
+				System.out.println("Running only once");
 				runOnce = true;
 			}
 			else{
 				System.err.printf(
 						"Option %s not recognized.%nLegal values are:%n -s / --setup  -  Automatic setup for deployment.",
 						args[0]);
+				System.exit(0);
 			}
-			System.exit(0);
 		}
 		/*
 		 * Dersom vi ikke har alt vi trenger for å kjøre når vi starter,
 		 *  så krasjer vi med en gang, istedenfor å sløse med alles tid.
 		 */
 		if(!validateEnvironment()){
+			System.out.println("Invalid environment");
 			System.exit(1);
 		}
 
@@ -92,11 +95,36 @@ public class SemanticFlight {
 				//		rdfLoader.loadAirportsDbpedia();
 			}
 		};
-		if(runOnce){
-			Thread once = new Thread(semanticRunnable);
-			once.start();
+		System.out.println("Startup complete. Running");
+		if(SemanticFlight.runOnce){
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			System.out.println(dateFormat.format(cal.getTime()));
+
+			long time = System.currentTimeMillis();
+
+			Queue<File> xmlFileQueue = pullAvinorXML();
+
+			long timeEnd = System.currentTimeMillis() - time;		
+			System.out.println("Downloading xml took: " + timeEnd/1000 + " XMLs: " + xmlFileQueue.size());
+			time = System.currentTimeMillis();
+
+			// Parse XML and then persist triples
+			parseAndPersistXMLQueue(xmlFileQueue);
+			timeEnd = System.currentTimeMillis() - time;
+			System.out.println("Parsing took: " + timeEnd/1000);		
+			time = System.currentTimeMillis();
+
+			debugQuerys();				
+			//				backupTriples();
+
+			timeEnd = System.currentTimeMillis() - time;
+			System.out.println("Loading model took: " + timeEnd/1000);
+
+			//		rdfLoader.loadAirportsDbpedia();
 		}
 		else{
+			System.out.println("Running as a service");
 			// Third argument in scheduledAtFixedRate define run-time
 			// TODO put scheduled time in ini-file
 			ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
