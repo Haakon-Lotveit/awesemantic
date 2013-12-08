@@ -65,7 +65,6 @@ public class SemanticFlight {
 
 		Runnable semanticRunnable = new Runnable() {
 			public void run() {
-
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 				Calendar cal = Calendar.getInstance();
 				System.out.println(dateFormat.format(cal.getTime()));
@@ -94,7 +93,8 @@ public class SemanticFlight {
 			}
 		};
 		if(runOnce){
-			semanticRunnable.run();
+			Thread once = new Thread(semanticRunnable);
+			once.start();
 		}
 		else{
 			// Third argument in scheduledAtFixedRate define run-time
