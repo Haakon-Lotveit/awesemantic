@@ -151,8 +151,8 @@ public class TDBwrapper extends Object {
 			             .addProperty(hasFlightID, f.getFlight_id())
 			             .addProperty(scheduledArrivalTime, f.getScheduledTime())
 //			             .addProperty(arrivingORDeparting, f.getArrOrDep())
-			             .addProperty(airline, f.getAirline())
-			             .addProperty(departingAirport, f.getAirport())
+			             .addProperty(airline, model.createLiteral(f.getAirline(),"en"))
+			             .addProperty(departingAirport, model.createLiteral(f.getAirport(), "en"))
 //			             .addProperty(statusParent, 
 //			            		 model.createResource()
 			            		 .addProperty(statusCodeA, f.getStatusCode())
@@ -165,7 +165,7 @@ public class TDBwrapper extends Object {
 			             .addProperty(scheduledDepartureTime, f.getScheduledTime())
 //			             .addProperty(arrivingORDeparting, f.getArrOrDep())
 			             .addProperty(airline, model.createLiteral(f.getAirline(), "en"))
-			             .addProperty(arrivingAirport, f.getAirport())
+			             .addProperty(arrivingAirport, model.createLiteral(f.getAirport(), "en"))
 //			             .addProperty(statusParent, 
 //			            		 model.createResource(resourceURI+"statusParent"+f.getFlight_id())
 			            		 .addProperty(statusCodeD, f.getStatusCode())
