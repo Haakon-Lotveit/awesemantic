@@ -18,6 +18,8 @@
 
 package no.uib.semanticweb.semanticflight.rdfstore ;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.List;
 
 import no.uib.semanticweb.semanticflight.Flight;
@@ -171,8 +173,12 @@ public class TDBwrapper extends Object {
 			}
 				
 		}
-		
-		dataset.commit();
+		try {
+			model.write(new FileOutputStream("triples.rdf"), "TURTLE");
+		} catch (FileNotFoundException e) {
+			System.out.println("model.write failed!");
+			e.printStackTrace();
+		}
 		dataset.close();
 		store = null;
 		dataset = null;
