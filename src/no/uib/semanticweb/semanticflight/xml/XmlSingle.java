@@ -44,9 +44,11 @@ public class XmlSingle {
 						Scanner s = new Scanner(url.openStream());
 						File outfile = new File("xml/xmlA/" + airport+ "A.xml");
 						if(!outfile.exists()){
-							System.err.printf("Filen \"%s\" finnes ikke.%nTODO: Fiks slik at den blir laget automatisk om den ikke finnes.%n",
+							if(!outfile.createNewFile()){
+							System.err.printf("Filen \"%s\" Kunne ikke lages.%nTODO: Fiks slik at den blir laget automatisk om den ikke finnes.%n",
 											  outfile.getAbsolutePath());
 							System.exit(1);
+							}
 						}
 						BufferedWriter writer = new BufferedWriter(new FileWriter(outfile));
 						while(s.hasNext()){
