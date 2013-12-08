@@ -40,10 +40,13 @@ public class SemanticFlight {
 	}
 
 	public static void main(String[] args){
-
+		boolean runOnce = false;
 		if(args.length >= 1){
 			if(args[0].equals("--setup") || args[0].equals("-s")){
 				setup();
+			}
+			else if (args[0].equals("--run-once")){
+				runOnce = true;
 			}
 			else{
 				System.err.printf(
@@ -60,7 +63,6 @@ public class SemanticFlight {
 			System.exit(1);
 		}
 
-		
 		Runnable semanticRunnable = new Runnable() {
 			public void run() {
 
@@ -91,12 +93,16 @@ public class SemanticFlight {
 				//		rdfLoader.loadAirportsDbpedia();
 			}
 		};
+		if(runOnce){
+			semanticRunnable.run();
+		}
+		else{
+			// Third argument in scheduledAtFixedRate define run-time
+			// TODO put scheduled time in ini-file
+			ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+			executor.scheduleAtFixedRate(semanticRunnable, 0, 40, TimeUnit.SECONDS);
 
-		// Third argument in scheduledAtFixedRate define run-time
-		// TODO put scheduled time in ini-file
-		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-		executor.scheduleAtFixedRate(semanticRunnable, 0, 40, TimeUnit.SECONDS);
-
+		}
 	}
 
 	/**
