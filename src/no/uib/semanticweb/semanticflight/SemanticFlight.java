@@ -2,8 +2,7 @@ package no.uib.semanticweb.semanticflight;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.DateFormat;
@@ -18,14 +17,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.ini4j.Ini;
-import org.ini4j.InvalidFileFormatException;
-
 import no.uib.semanticweb.semanticflight.rdfstore.TDBconnections;
 import no.uib.semanticweb.semanticflight.rdfstore.TDBwrapper;
-import no.uib.semanticweb.semanticflight.verkty.FileIO;
 import no.uib.semanticweb.semanticflight.xml.SemanticXMLParser;
 import no.uib.semanticweb.semanticflight.xml.XmlSingle;
+
+import org.ini4j.Ini;
+import org.ini4j.InvalidFileFormatException;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.ReadWrite;
@@ -214,7 +212,7 @@ public class SemanticFlight {
 			}
 			
 			if(write){
-				BufferedWriter writer = FileIO.getWriter(newIni);
+				BufferedWriter writer = new BufferedWriter(new FileWriter(newIni));
 				writer.append("[StoreRDF]" + "\n");
 				writer.append("Location = tdb/flightSTORE" + "\n");
 				writer.append("\n");

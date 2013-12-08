@@ -44,7 +44,6 @@ public class TDBconnections {
 		
 		if(null != ini){
 			location = ini.get("StoreRDF", "Location", String.class);
-//			System.out.printf("[DEBUG] Location: %s%n", location);
 		}
 		
 		File loc = new File(location);
