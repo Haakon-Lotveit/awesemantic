@@ -25,12 +25,17 @@ import java.util.List;
 import no.uib.semanticweb.semanticflight.Flight;
 
 import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.DatasetAccessor;
+import com.hp.hpl.jena.query.DatasetAccessorFactory;
+import com.hp.hpl.jena.query.DatasetFactory;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.sparql.modify.request.UpdateLoad;
 import com.hp.hpl.jena.update.GraphStore;
 import com.hp.hpl.jena.update.GraphStoreFactory;
+import com.hp.hpl.jena.update.UpdateAction;
 import com.hp.hpl.jena.update.UpdateExecutionFactory;
 import com.hp.hpl.jena.update.UpdateFactory;
 import com.hp.hpl.jena.update.UpdateProcessor;
@@ -179,10 +184,35 @@ public class TDBwrapper extends Object {
 			System.out.println("model.write failed!");
 			e.printStackTrace();
 		}
+		
+		
+		
 		dataset.close();
 		store = null;
 		dataset = null;
 		model = null;
 				
+	}
+	
+	public static void updateFusekiHTTP() {
+		try {
+//		DatasetAccessor d = new DatasetAccessorFactory().createHTTP("http://31.24.130.48:3030/datas/update");
+//		Dataset dataset = DatasetFactory.create(d.getModel());
+//		GraphStore graphStore = GraphStoreFactory.create(dataset) ;
+		
+		UpdateRequest request = UpdateFactory.create() ;
+		request.add("DROP ALL")
+//		       .add("CREATE GRAPH <http://example/g2>")
+//				.add(new UpdateLoad("triples.rdf"))
+				.add("LOAD <file:/opt/dev/awesemantic/triples.rdf>")
+//		       .add("LOAD <file:triples.rdf> INTO <http://default") 
+		;
+		// And perform the operations.
+		UpdateExecutionFactory.createRemote(request, "http://localhost:3030/datas1/update").execute();
+//		UpdateAction.execute(request, graphStore) ;
+		} catch (Exception i) {
+			i.printStackTrace();
+			System.out.println("FusekiUpdateFail!!");
+		}
 	}
 }

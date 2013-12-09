@@ -313,7 +313,7 @@ public class SemanticFlight {
 					System.out.println("Not deleted xmlFile");
 				}
 			}
-
+			TDBwrapper.updateFusekiHTTP();
 		}catch(Exception e) {
 			e.printStackTrace();
 			//				rdfLoader.writeFlightsToTDB(flights);
