@@ -45,6 +45,7 @@ public class SemanticFlight {
 		if(args.length >= 1){
 			if(args[0].equals("--setup") || args[0].equals("-s")){
 				setup();
+				System.exit(0);
 			}
 			else if (args[0].equals("--run-once")){
 				System.out.println("Running only once");
@@ -57,6 +58,7 @@ public class SemanticFlight {
 				System.exit(0);
 			}
 		}
+		
 		/*
 		 * Dersom vi ikke har alt vi trenger for å kjøre når vi starter,
 		 *  så krasjer vi med en gang, istedenfor å sløse med alles tid.
