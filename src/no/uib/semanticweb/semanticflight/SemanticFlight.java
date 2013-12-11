@@ -261,7 +261,7 @@ public class SemanticFlight {
 				writer.append("[Scrape]" + "\n");
 				writer.append("DelayTime = 40" + "\n");
 				writer.append("\n");
-				writer.append("[Host] + \n");
+				writer.append("[Host]" + "\n");
 				writer.append("URL = http://localhost:3030/datas1/" + "\n");
 				writer.append("\n");
 				writer.close();
