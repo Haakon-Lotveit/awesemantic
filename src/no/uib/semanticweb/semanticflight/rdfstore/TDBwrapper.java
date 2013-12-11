@@ -134,17 +134,15 @@ public class TDBwrapper extends Object {
 		Property hasFlightID = model.createProperty(propertyURI + "hasFlightID");
 		Property scheduledArrivalTime = model.createProperty(propertyURI + "schedueledArrivalTime");
 		Property scheduledDepartureTime = model.createProperty(propertyURI + "schedueledDepartureTime");
-//		Property arrivingORDeparting = model.createProperty(propertyURI + "arrivingOrDeparting");
 		Property airline = model.createProperty(propertyURI + "airline");
 		// To or from according to XML, not originating xml. Add arrOrDepValue after airport
 		Property arrivingAirport = model.createProperty(propertyURI + "arrivingAirport");
 		Property departingAirport = model.createProperty(propertyURI + "departingAirport");
-		// Create anonymous node if exists
+		// Statuscodes and times default to emptystring in flight object
 		Property statusCodeA = model.createProperty(propertyURI + "statusCodeA");
 		Property statusTimeA = model.createProperty(propertyURI + "statusTimeA");
 		Property statusCodeD = model.createProperty(propertyURI + "statusCodeD");
 		Property statusTimeD = model.createProperty(propertyURI + "statusTimeD");
-		Property statusParent = model.createProperty(propertyURI + "statusParent");
 		
 		
 		for(int i = 0; i < flights.size() ; i++) {
@@ -155,26 +153,20 @@ public class TDBwrapper extends Object {
 				Resource flightRes  = model.createResource(resourceURI + f.getFlight_id())
 			             .addProperty(hasFlightID, f.getFlight_id())
 			             .addProperty(scheduledArrivalTime, f.getScheduledTime())
-//			             .addProperty(arrivingORDeparting, f.getArrOrDep())
 			             .addProperty(airline, model.createLiteral(f.getAirline(),"en"))
 			             .addProperty(departingAirport, model.createLiteral(f.getAirport(), "en"))
-//			             .addProperty(statusParent, 
-//			            		 model.createResource()
-			            		 .addProperty(statusCodeA, f.getStatusCode())
-			            		 .addProperty(statusTimeA, f.getStatusTime());
+			             .addProperty(statusCodeA, f.getStatusCode())
+			             .addProperty(statusTimeA, f.getStatusTime());
 			}
 			
 			if(f.getArrOrDep().equals("D")) {
 				Resource flightRes  = model.createResource(resourceURI + f.getFlight_id())
 			             .addProperty(hasFlightID, f.getFlight_id())
 			             .addProperty(scheduledDepartureTime, f.getScheduledTime())
-//			             .addProperty(arrivingORDeparting, f.getArrOrDep())
 			             .addProperty(airline, model.createLiteral(f.getAirline(), "en"))
 			             .addProperty(arrivingAirport, model.createLiteral(f.getAirport(), "en"))
-//			             .addProperty(statusParent, 
-//			            		 model.createResource(resourceURI+"statusParent"+f.getFlight_id())
-			            		 .addProperty(statusCodeD, f.getStatusCode())
-			            		 .addProperty(statusTimeD, f.getStatusTime());
+			             .addProperty(statusCodeD, f.getStatusCode())
+			             .addProperty(statusTimeD, f.getStatusTime());
 			}
 				
 		}
@@ -186,7 +178,7 @@ public class TDBwrapper extends Object {
 		}
 		
 		
-		
+		// Cleanup. Docs recommend to set to null.
 		dataset.close();
 		store = null;
 		dataset = null;
@@ -194,22 +186,20 @@ public class TDBwrapper extends Object {
 				
 	}
 	
+	/**
+	 * Updates server through sparql-update endpoint.
+	 * TODO: Settings.ini
+	 */
 	public static void updateFusekiHTTP() {
 		try {
-//		DatasetAccessor d = new DatasetAccessorFactory().createHTTP("http://31.24.130.48:3030/datas/update");
-//		Dataset dataset = DatasetFactory.create(d.getModel());
-//		GraphStore graphStore = GraphStoreFactory.create(dataset) ;
 		
 		UpdateRequest request = UpdateFactory.create() ;
 		request.add("DROP ALL")
-//		       .add("CREATE GRAPH <http://example/g2>")
-//				.add(new UpdateLoad("triples.rdf"))
-				.add("LOAD <file:/opt/dev/awesemantic/triples.rdf>")
-//		       .add("LOAD <file:triples.rdf> INTO <http://default") 
-		;
+					.add("LOAD <file:triples.rdf>");
+		
 		// And perform the operations.
 		UpdateExecutionFactory.createRemote(request, "http://localhost:3030/datas1/update").execute();
-//		UpdateAction.execute(request, graphStore) ;
+
 		} catch (Exception i) {
 			i.printStackTrace();
 			System.out.println("FusekiUpdateFail!!");

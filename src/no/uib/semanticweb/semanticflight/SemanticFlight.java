@@ -41,7 +41,7 @@ public class SemanticFlight {
 	}
 
 	public static void main(String[] args){
-		
+
 		if(args.length >= 1){
 			if(args[0].equals("--setup") || args[0].equals("-s")){
 				setup();
@@ -58,7 +58,7 @@ public class SemanticFlight {
 				System.exit(0);
 			}
 		}
-		
+
 		/*
 		 * Dersom vi ikke har alt vi trenger for å kjøre når vi starter,
 		 *  så krasjer vi med en gang, istedenfor å sløse med alles tid.
@@ -118,12 +118,10 @@ public class SemanticFlight {
 			time = System.currentTimeMillis();
 
 			debugQuerys();				
-			//				backupTriples();
 
 			timeEnd = System.currentTimeMillis() - time;
 			System.out.println("Loading model took: " + timeEnd/1000);
 
-			//		rdfLoader.loadAirportsDbpedia();
 		}
 		else{
 			System.out.println("Running as a service");
@@ -196,23 +194,23 @@ public class SemanticFlight {
 	 * NB! Denne metoden er komplett avhengig av at Settings.ini eksisterer.
 	 */
 	private static void createFolders(){
-			Ini lookup;
-			try {
-				lookup = new Ini(SemanticFlight.getIniFile());
-				File arrivalsFolder = new File(lookup.get("XMLParse", "ArrivalsFolder"));
-				File departuresFolder = new File(lookup.get("XMLParse", "DeparturesFolder"));
-				boolean success = arrivalsFolder.mkdirs();
-				boolean great = departuresFolder.mkdirs();
-				boolean greatSuccess = great && success;
-				
-				System.out.printf("%s tried to create folders%n", greatSuccess? "Successfully":"Unsuccessfully");
-				
-			} catch (InvalidFileFormatException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
+		Ini lookup;
+		try {
+			lookup = new Ini(SemanticFlight.getIniFile());
+			File arrivalsFolder = new File(lookup.get("XMLParse", "ArrivalsFolder"));
+			File departuresFolder = new File(lookup.get("XMLParse", "DeparturesFolder"));
+			boolean success = arrivalsFolder.mkdirs();
+			boolean great = departuresFolder.mkdirs();
+			boolean greatSuccess = great && success;
+
+			System.out.printf("%s tried to create folders%n", greatSuccess? "Successfully":"Unsuccessfully");
+
+		} catch (InvalidFileFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 	private static void createNewIni(){
 		try{
@@ -232,7 +230,7 @@ public class SemanticFlight {
 							newIni.delete();
 							done = true;							
 							break;
-							
+
 						case 'N':
 						case 'n':
 							System.out.println("Not creating new Settings.ini file");
@@ -246,7 +244,7 @@ public class SemanticFlight {
 				}
 				kb.close();
 			}
-			
+
 			if(write){
 				BufferedWriter writer = new BufferedWriter(new FileWriter(newIni));
 				writer.append("[StoreRDF]" + "\n");
@@ -318,13 +316,12 @@ public class SemanticFlight {
 			TDBwrapper.updateFusekiHTTP();
 		}catch(Exception e) {
 			e.printStackTrace();
-			//				rdfLoader.writeFlightsToTDB(flights);
 		}
 
 	}
 
 	/**
-	 * Pulls xmls from all airports connecting to avinor airports
+	 * Pulls xmls from all airports connecting to avinor airports.
 	 * @return Queue<File> queue
 	 */
 	private static Queue<File> pullAvinorXML() {
@@ -332,6 +329,7 @@ public class SemanticFlight {
 		ArrayList<ArrayList<String>> li = new ArrayList<ArrayList<String>>();
 		ArrayList<String> fly = new ArrayList<String>();
 
+		// All avinor-owned airports
 		String[] avinorAirPorts = {"AES","KSU","NVK","FBU","OSL","BVG","BOO","MQN",
 				"MJF","OSY","SDN","ALF","ANX","BJF","BDU","BNN",
 				"FDE","VDB","FRO","HFT","EVE","HAU","HVG","KKN",
@@ -349,23 +347,5 @@ public class SemanticFlight {
 		}
 		return single.getXmlQueue();
 	}
-
-
-	/**
-	 * Writes triples to file for validation or backup.
-	 */
-//	private static void backupTriples() {
-//		TDBconnections s = TDBconnections.create();
-//		Dataset set = s.getDataset();
-//		set.begin(ReadWrite.READ);
-//		Model model = set.getDefaultModel();
-//		try {
-//			model.write(new FileOutputStream(new File("backup.rdf")));
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		set.end();
-//	}
 
 }

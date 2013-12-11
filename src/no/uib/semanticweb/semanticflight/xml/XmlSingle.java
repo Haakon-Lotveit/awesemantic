@@ -78,10 +78,6 @@ public class XmlSingle {
 						e.printStackTrace();
 					}
 					
-					// TODO: Dette kan gjøres på en linje med Scanner.
-//					Scanner s = new Scanner(filnavn).useDelimiter("\\Z").next();
-//					String xml = s.next();
-//					s.close();
 
 					BufferedReader reader;
 					try {
@@ -106,14 +102,7 @@ public class XmlSingle {
 						}
 						iata.add(sublist);
 						connections(iata, round+1, depth);
-						//					for(int j = 0; j <iAta.length; j++){
-						//						File f = new File("xml/xmlA/" + iAta[j]+ "A.xml");
-						//						File f2 = new File("xml/xmlD/" + iAta[j]+ "D.xml");
-						//						if(f.isFile()|f2.isFile()){
-						//						}else{
-						//							connections(iAta[j], depth-1);
-						//						}
-						//					}
+
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
