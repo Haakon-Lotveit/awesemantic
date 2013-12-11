@@ -1,7 +1,10 @@
 package no.uib.semanticweb.semanticflight;
 
-
-
+/**
+ * Represents a flight.
+ * @author ken
+ *
+ */
 public class Flight {
 
 	private String flight_id;
@@ -9,18 +12,18 @@ public class Flight {
 	private String scheduledTime;
 
 	private String arrOrDep;
-	
+
 	private String airport;
-	
+
 	private String statusCode;
 	private String statusTime;
 
 	private String airline;
-	
+
 	public Flight(){
-		
+
 	}
-	
+
 	public Flight(String airline, String flightID, String arrOrDep2,
 			String airport2, String statusCode2, String scheduledTime2,
 			String statusTime2) {
@@ -32,7 +35,7 @@ public class Flight {
 		this.statusTime = statusTime2;
 		this.scheduledTime = scheduledTime2;
 	}	
-	
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(this.airline + " ");
@@ -42,7 +45,7 @@ public class Flight {
 		sb.append(this.scheduledTime+ " " + "\t");
 		sb.append(this.statusTime+ " ");
 		sb.append(this.statusCode+ " ");
-		
+
 		return sb.toString();
 	}
 
@@ -73,6 +76,6 @@ public class Flight {
 	public String getAirline() {
 		return airline;
 	}
-	
-	
+
+
 }

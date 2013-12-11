@@ -10,56 +10,55 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
 
 /**
- * Dette er en enkel klasse som skal i teorien wrappe TDBFactory og slikt, slik at vi kan få mindre konfigurasjon og sånn... :D 
+ * Simple class wrapping TDBFactory, such that we get less configuration
  * @author haakon
  *
  */
 public class TDBconnections {
-	// Private deler
+
 	private Dataset ds = null;
-	
-	// konstruktør
+
+
 	private TDBconnections(String location){
 		this.ds = TDBFactory.createDataset(location);
 	}
-	
-	// statiske metoder for å lage storeRDF objekter
+
+	// static method for creating storeRDF object
 	public static TDBconnections create() {
 		Ini ini = null;
 		try {
 			ini = new Ini(new File("Settings.ini"));			
-		} catch (InvalidFileFormatException e) { /* Det er ikke så veldig mye vi kan gjøre dersom .ini filen er feilformattert eller lignende, så vi bare skriver ut for nå. */
+		} catch (InvalidFileFormatException e) { /* Just prints for now */
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		/*
-		 * Ja, dette er totalt dust. Men det virker jo sånn ca.
-		 * standard location er tatt fra Ken-Thomas Nilsens ærverdige streng i RDFLoader.
-		 */
+
+		// gets the location from the ini. Else default location.
 		String location = "tdb/flightSTORE";
-		
+
 		if(null != ini){
 			location = ini.get("StoreRDF", "Location", String.class);
 		}
-		
+
+		// Creates folders
 		File loc = new File(location);
 		if(!(loc.exists())){
 			loc.mkdirs();
 		}
 		return new TDBconnections(location);
 	}
+
 	public static TDBconnections create(String location){
 		return new TDBconnections(location);
 	}
-	
+
 	public Model getModel(){
 		return ds.getDefaultModel();
 	}
-	
+
 	public Dataset getDataset(){
 		return ds;
 	}

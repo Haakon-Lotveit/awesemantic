@@ -23,7 +23,6 @@ import org.xml.sax.SAXException;
  */
 public class SemanticXMLParser {
 
-	//No generics
 	List<Flight> flights;
 	Document dom;
 
@@ -38,28 +37,23 @@ public class SemanticXMLParser {
 		//parse the xml file and get the dom object
 		parseXmlFile(fileURI);
 
-		//get each employee element and create a Employee object
+		//get each flight element and create a Flight object
 		parseDocument();
-
-		//Iterate through the list and print the data
-//		printData();
 
 	}
 
 
-
+	/**
+	 * Reads a file and sets the Document object.
+	 * @param fileURI
+	 */
 	private void parseXmlFile(String fileURI){
-		//get the factory
+	
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
 		try {
-
-			//Using factory get an instance of document builder
-			DocumentBuilder db = dbf.newDocumentBuilder();
-
-			//parse using builder to get DOM representation of the XML file
-			dom = db.parse(fileURI);
-
+			DocumentBuilder builder = dbf.newDocumentBuilder();
+			dom = builder.parse(fileURI);
 
 		}catch(ParserConfigurationException pce) {
 			pce.printStackTrace();
@@ -70,23 +64,25 @@ public class SemanticXMLParser {
 		}
 	}
 
-
+	/**
+	 * Parse and add all <flight> to list of flights
+	 */
 	private void parseDocument(){
 		//get the root elememt
-		Element docEle = dom.getDocumentElement();
+		Element root = dom.getDocumentElement();
 
-		//get a nodelist of <employee> elements
-		NodeList nl = docEle.getElementsByTagName("flight");
-		if(nl != null && nl.getLength() > 0) {
-			for(int i = 0 ; i < nl.getLength();i++) {
+		//get a nodelist of <flight> elements
+		NodeList nlist = root.getElementsByTagName("flight");
+		if(nlist != null && nlist.getLength() > 0) {
+			for(int i = 0 ; i < nlist.getLength() ; i++) {
 
-				//get the employee element
-				Element el = (Element)nl.item(i);
+				//get the flight element
+				Element el = (Element)nlist.item(i);
 
-				//get the Employee object
+				//get the Flight object
 				Flight e = getFlight(el);
 
-				//add it to list
+				//add it to list of flights
 				flights.add(e);
 			}
 		}
@@ -94,39 +90,36 @@ public class SemanticXMLParser {
 
 
 	/**
-	 * I take an flight element and read the values in, create
+	 * Takes a flight element, create
 	 * an Flight object and return it
 	 * @param flightEl
 	 * @return
 	 */
 	private Flight getFlight(Element flightEl) {
 
-		//for each <employee> element get text or int values of 
-		//name ,id, age and name
+		//Each flights information from the xml
 		String airline = getTextValue(flightEl,"airline");
 		String flightID = getTextValue(flightEl, "flight_id");
 		String scheduledTime = getTextValue(flightEl,"schedule_time");
 		String arrOrDep = getTextValue(flightEl,"arr_dep");
 		String airport = getTextValue(flightEl, "airport");
 
+		// Defaults to emptystring if not existent
 		String statusCode = "";
 		String statusTime = "";
-		//		System.out.println(getTextValue(empEl, "status"));
 
 		NodeList nl = flightEl.getElementsByTagName("status");
-		//		System.out.println(nl.item(0).getAttributes());
-		//		NamedNodeMap attributes = nl.item(0).getAttributes();
-		//		attributes.item(0).get
+
 		if(nl != null && nl.getLength() > 0) {
 			for(int i = 0 ; i < nl.getLength();i++) {
-				//get the employee element
+				//get the statuscode and timestamp
 				Element el = (Element)nl.item(i);
 				statusCode = el.getAttribute("code");
 				statusTime = el.getAttribute("time");
 			}
 		}
 
-		//Create a new Employee with the value read from the xml nodes
+		//Create a new Employee with the values read from the xml nodes
 		Flight e = new Flight(airline, flightID, arrOrDep, airport,
 				statusCode, scheduledTime, statusTime);				
 
@@ -135,17 +128,14 @@ public class SemanticXMLParser {
 
 
 	/**
-	 * I take a xml element and the tag name, look for the tag and get
-	 * the text content 
-	 * i.e for <employee><name>John</name></employee> xml snippet if
-	 * the Element points to employee node and tagName is name I will return John  
-	 * @param ele
-	 * @param tagName
+	 * Takes a element and return the value as text  
+	 * @param element
+	 * @param tag
 	 * @return
 	 */
-	private String getTextValue(Element ele, String tagName) {
+	private String getTextValue(Element element, String tag) {
 		String textVal = null;
-		NodeList nl = ele.getElementsByTagName(tagName);
+		NodeList nl = element.getElementsByTagName(tag);
 		if(nl != null && nl.getLength() > 0) {
 			Element el = (Element)nl.item(0);
 			textVal = el.getFirstChild().getNodeValue();
@@ -154,17 +144,6 @@ public class SemanticXMLParser {
 		return textVal;
 	}
 
-
-	/**
-	 * Calls getTextValue and returns a int value
-	 * @param ele
-	 * @param tagName
-	 * @return
-	 */
-	private int getIntValue(Element ele, String tagName) {
-		//in production application you would catch the exception
-		return Integer.parseInt(getTextValue(ele,tagName));
-	}
 
 	/**
 	 * Iterate through the list and print the 
