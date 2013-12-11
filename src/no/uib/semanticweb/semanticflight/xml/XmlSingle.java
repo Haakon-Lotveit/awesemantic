@@ -21,18 +21,18 @@ public class XmlSingle {
 
 	private static Queue<File> xmlQueue = new LinkedList<File>();
 
-	// Rekursivt brukt metode for å laste ned xml-filer fra Avinor.
+	// Recursive method used to extract xml-files from Avinor.
 	/**
 	 * 
-	 * @param iata Listen over iatakoder som man skal finne koblinger til og laste ned.
-	 * @param round Hvor dypt man er kommet i rekursjonen
-	 * @param depth Ønsket rekursjonsdybde.
+	 * @param iata The list of iAta codes that we wish to extract xml-files from.
+	 * @param round Number of recursions already executed.
+	 * @param depth Maximum number of recursion.
 	 */
 	public void connections(ArrayList<ArrayList<String>> iata, int round, int depth){
 		if(round == depth){
-			// Ingenting blir gjort om man har nådd ønsket rekursjonsdybde.
+			// Nothing is done if maximum recursion depth is reached.
 		}else{
-			//Hvis en xml fil av den ønskede iatakoden ikke allerede eksisterer generes denne.
+			//Looping through all the iata-codes for the given round of recursion
 			for(int i = 0; i< iata.get(round).size(); i++){
 				String airport = iata.get(round).get(i); 
 				File f = new File("xml/xmlA/" + iata.get(round).get(i)+ "A.xml");
@@ -45,11 +45,11 @@ public class XmlSingle {
 					xmlQueue.add(f2);
 				}
 				if(f.isFile()|f2.isFile()){
-					// Hvis filen allerede eksisterer gjøres ingenting.
+					// If the xml-files already exist nothing is done.
 				}
 				else{
 					URL url;
-					//Om filen ikke finnes kopieres den fra avinor.
+					// If the file(s) do not exist they are copied from Avinor.
 					//Arrivals
 					try {
 						url = new URL("http://flydata.avinor.no/XmlFeed.asp?airport="+ airport + "&direction=A");
@@ -94,7 +94,7 @@ public class XmlSingle {
 
 					BufferedReader reader;
 					try {
-						//går igjennom de nye xml-filene for å finne ut hvilke andre iata koder som er tilknyttet.
+						// Reads through the newly created xml-files to extract new iAta codes from connected airports.
 						reader = new BufferedReader(new FileReader("xml/xmlD/" + airport+ "D.xml"));
 						String xml = "";
 						while(reader.readLine() != null){
@@ -109,14 +109,14 @@ public class XmlSingle {
 						String[]parts = xml.split("<airport>|<via_airport>|,");
 						String[]iAta = new String[parts.length-1];
 						ArrayList<String> sublist = new ArrayList<String>();
-						//lager en ny liste med iata koder for neste kall av metoden.
+						// A new list of codes is created for the next round of recursion.
 						for(int j = 1; j < parts.length; j++){
 							String sub = parts[j].substring(0,3);
 							sublist.add(sub);
 							iAta[j-1] = sub;
 						}
 						iata.add(sublist);
-						//nytt rekursivt kall som øker rundetallet.
+						// New recursive call, round number is increased.
 						connections(iata, round+1, depth);
 
 					} catch (IOException e) {
