@@ -1,0 +1,35 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import urllib
+import urllib2
+import httplib
+import csv
+import string
+import time
+import sys
+from awesemantic import base_url, port, dataset, query_prefix, result_type
+
+airport = sys.argv[1]
+query = (u'select ?flight ?to ?departing ?arriving ?company where {'
+         u'?flight <http://awesemantic.com/properties/departingAirport> "%(airport)s"@en .'
+         u'?flight <http://awesemantic.com/properties/arrivingAirport> ?to .'
+         u'?flight <http://awesemantic.com/properties/schedueledArrivalTime> ?arriving .'
+         u'?flight <http://awesemantic.com/properties/schedueledDepartureTime> ?departing .'
+         u'?flight <http://awesemantic.com/properties/airline> ?company .'
+         u'}') % \
+    {"airport": airport}
+
+final_url = base_url + ":" + port + "/" + dataset + "/" + query_prefix + urllib.quote(query).replace("/", "%2F").replace(" ", "+") + result_type
+u = urllib2.urlopen(final_url)
+reader = csv.reader(u)
+
+# Formats and writes out the data
+print string.join(reader.next(), "\t")
+for row in reader:
+    line = string.join([row[0].rsplit("/", 1)[1],
+                        row[1],
+                        row[2][11:],
+                        row[3][11:],
+                        row[4]], "\t")
+    print line

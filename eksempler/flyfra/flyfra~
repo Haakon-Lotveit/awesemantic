@@ -1,0 +1,45 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import urllib
+import urllib2
+import httplib
+import csv
+import string
+import time
+import sys
+
+airport = sys.argv[1]
+base_url = u'http://31.24.130.48'
+port = u"3030"
+dataset = u'datas1'
+query_prefix = u'query?query='
+result_type = u'&output=csv'
+query = (u'select ?flight ?to ?departing ?arriving ?company where {'
+         u'?flight <http://awesemantic.com/properties/departingAirport> "%(airport)s"@en .'
+         u'?flight <http://awesemantic.com/properties/arrivingAirport> ?to .'
+         u'?flight <http://awesemantic.com/properties/schedueledArrivalTime> ?arriving .'
+         u'?flight <http://awesemantic.com/properties/schedueledDepartureTime> ?departing .'
+         u'?flight <http://awesemantic.com/properties/airline> ?company .'
+         u'}') % \
+    {"airport": airport}
+
+
+
+r = u'?flight <http://awesemantic.com/properties/schedueledArrivalTime> ?arriving .'
+# s = cgi.escape(r).encode('ascii', 'xmlcharrefreplace')
+s = urllib.quote(r).replace("/", "%2F")
+
+final_url = base_url + ":" + port + "/" + dataset + "/" + query_prefix + urllib.quote(query).replace("/", "%2F").replace(" ", "+") + result_type
+u = urllib2.urlopen(final_url)
+reader = csv.reader(u)
+
+# 2013-12-11T13:05:00Z Avinors timestamp
+print string.join(reader.next(), "\t")
+for row in reader:
+    line = string.join([row[0].rsplit("/", 1)[1],
+                        row[1],
+                        row[2][11:],
+                        row[3][11:],
+                        row[4]], "\t")
+    print line

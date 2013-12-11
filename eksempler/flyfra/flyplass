@@ -1,0 +1,31 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import urllib
+import urllib2
+import httplib
+import csv
+import string
+import time
+import sys
+from awesemantic import base_url, port, dataset, query_prefix, result_type
+
+airport = sys.argv[1]
+query = (u'SELECT DISTINCT ?namn ?iata WHERE {'
+         u'{'
+         u'?p <http://awesemantic.com/properties/departingAirport> ?iata .'
+         u'} UNION {'
+         u'?p <http://awesemantic.com/properties/arrivingAirport> ?iata .'
+         u'}'
+         u'SERVICE <http://dbpedia.org/sparql> {'
+         u'?airports <http://dbpedia.org/ontology/iataLocationIdentifier> ?iata .'
+         u'?airports <http://www.w3.org/2000/01/rdf-schema#label> ?namn .'
+         u'}'
+         u'FILTER (lang(?namn) = \'en\') .'
+         u'}')
+final_url = base_url + ":" + port + "/" + dataset + "/" + query_prefix + urllib.quote(query).replace("/", "%2F").replace(" ", "+") + result_type
+u = urllib2.urlopen(final_url)
+reader = csv.reader(u)
+
+for row in reader:
+    print string.join(row, "\t")
