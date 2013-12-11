@@ -18,9 +18,14 @@
 
 package no.uib.semanticweb.semanticflight.rdfstore ;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
+
+import org.ini4j.Ini;
+import org.ini4j.InvalidFileFormatException;
 
 import no.uib.semanticweb.semanticflight.Flight;
 
@@ -43,7 +48,6 @@ import com.hp.hpl.jena.update.UpdateRequest;
 
 /**
  * 
- * @author ken
  * All communication with TDB should go through this. Maybe add a interface for modularity?
  *
  */
@@ -94,15 +98,6 @@ public class TDBwrapper extends Object {
 		} finally { 
 			dataset.end() ; 
 		}
-		//		model.write(System.out, "TURTLE");
-		//		ResultSetFormatter.out(System.out, results, query);
-
-//		Query query2 = QueryFactory.create( "" +
-//				"PREFIX dbo: <http://dbpedia.org/ontology/>" +
-//				"SELECT ?airports ?iata WHERE {" +
-//				"?airports dbo:iataLocationIdentifier ?iata ." +
-//				"}LIMIT 10");
-
 
 		TDBconnections s = TDBconnections.create();
 		Dataset set = s.getDataset();
@@ -188,7 +183,6 @@ public class TDBwrapper extends Object {
 	
 	/**
 	 * Updates server through sparql-update endpoint.
-	 * TODO: Settings.ini
 	 */
 	public static void updateFusekiHTTP() {
 		try {
@@ -197,8 +191,25 @@ public class TDBwrapper extends Object {
 		request.add("DROP ALL")
 					.add("LOAD <file:triples.rdf>");
 		
+		Ini ini = null;
+		try {
+			ini = new Ini(new File("Settings.ini"));			
+		} catch (InvalidFileFormatException e) { /* Just prints for now */
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// gets the delaytime from the ini. Else default location.
+		String dataset = "";
+
+		if(null != ini){
+			dataset = ini.get("Host", "URL", String.class);
+		}
+		
+		
 		// And perform the operations.
-		UpdateExecutionFactory.createRemote(request, "http://localhost:3030/datas1/update").execute();
+		UpdateExecutionFactory.createRemote(request, dataset+"update").execute();
 
 		} catch (Exception i) {
 			i.printStackTrace();

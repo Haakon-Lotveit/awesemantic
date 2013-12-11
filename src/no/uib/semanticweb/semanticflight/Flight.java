@@ -2,7 +2,6 @@ package no.uib.semanticweb.semanticflight;
 
 /**
  * Represents a flight.
- * @author ken
  *
  */
 public class Flight {

@@ -11,7 +11,6 @@ import com.hp.hpl.jena.tdb.TDBFactory;
 
 /**
  * Simple class wrapping TDBFactory, such that we get less configuration
- * @author haakon
  *
  */
 public class TDBconnections {

@@ -31,7 +31,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 /**
  * Runs our program!
- * @author ken
  *
  */
 public class SemanticFlight {
@@ -96,7 +95,7 @@ public class SemanticFlight {
 				System.out.println("Parsing took: " + timeEnd/1000);		
 				time = System.currentTimeMillis();
 
-				debugQuerys();				
+				printModelSize();				
 
 				timeEnd = System.currentTimeMillis() - time;
 				System.out.println("Loading model took: " + timeEnd/1000);
@@ -117,10 +116,8 @@ public class SemanticFlight {
 			try {
 				ini = new Ini(getIniFile());			
 			} catch (InvalidFileFormatException e) { /* Just prints for now */
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -139,13 +136,9 @@ public class SemanticFlight {
 	}
 
 	/**
-	 * @author Haakon Løtveit
-	 * (Ikke ferdig)
-	 * Sjekker om alle mapper og filer som må være tilstede er tilstede.
-	 * Skriver informative feilmeldinger dersom filer/mapper mangler.
-	 * @return false dersom de ikke er det, true dersom de er det.
-	 * TODO: Sjekke at alle mappene er der. (Nå sjekker den kun at xml/xmlA og xml/xmlB er der.
-	 * TODO: La resten av koden bruke INI-filen, slik at sjekken faktisk blir nyttig.	
+	 * Checks if all the necessary files and folders are present.
+	 * Writes informative errormessages if folder or file missing
+	 * @return boolean
 	 */
 	private static boolean validateEnvironment() {
 		boolean validity = true;
@@ -153,7 +146,7 @@ public class SemanticFlight {
 			System.err.printf(
 					"Ini file not found.%nExpected location: %s%nRun this program with the --setup option to recreate the standard Settings.ini.%n",
 					SemanticFlight.INI_FILE.getAbsolutePath());
-			/* Hvis vi ikke har ini filen kan vi ikke sjekke mapper, etc. Derfor returnerer vi med en gang.*/
+			/* If no inifile, then the folders are unset. Return at once.*/
 			return false;
 		}
 		Ini lookup;
@@ -177,14 +170,14 @@ public class SemanticFlight {
 			return validity;		
 		}
 
-		/* Dersom noe går galt når vi leser Inifilen: */
+		/* Error while reading ini: */
 		catch (InvalidFileFormatException e) {			
-			System.err.println("Settings.ini er feilformatert.\nStacktrace:\n");
+			System.err.println("Settings.ini wrong format.\nStacktrace:\n");
 			e.printStackTrace();
 			return false;
 		}
 		catch (IOException e) {
-			System.err.println("Kunne ikke lese Settings.ini.\nStacktrace:\n");
+			System.err.println("Could not read Settings.ini.\nStacktrace:\n");
 			e.printStackTrace();
 			return false;
 		}
@@ -196,7 +189,7 @@ public class SemanticFlight {
 	}
 
 	/**
-	 * NB! Denne metoden er komplett avhengig av at Settings.ini eksisterer.
+	 * Prerequisite is the existence of Settings.ini
 	 */
 	private static void createFolders(){
 		Ini lookup;
@@ -217,6 +210,10 @@ public class SemanticFlight {
 		}
 
 	}
+	
+	/**
+	 * Writes a file with default ini-information
+	 */
 	private static void createNewIni(){
 		try{
 			boolean write = true;
@@ -264,6 +261,9 @@ public class SemanticFlight {
 				writer.append("[Scrape]" + "\n");
 				writer.append("DelayTime = 40" + "\n");
 				writer.append("\n");
+				writer.append("[Host] + \n");
+				writer.append("URL = http://localhost:3030/datas1/" + "\n");
+				writer.append("\n");
 				writer.close();
 			}
 		}
@@ -274,27 +274,12 @@ public class SemanticFlight {
 			e.printStackTrace();
 		}
 	}
-	private static void debugQuerys() {
+	private static void printModelSize() {
 		TDBconnections s = TDBconnections.create();
 		Dataset set = s.getDataset();
 		set.begin(ReadWrite.READ);
 		Model mod = set.getDefaultModel();
 		System.out.println("Model size: " + mod.size());
-
-		//		Query query = QueryFactory.create(""
-		//				+ "PREFIX avi: <http://awesemantic.com/property/>"        		        	
-		//				+ "PREFIX avires: <http://awesemantic.com/resource/>"
-		//				+ "SELECT ?pred ?subject WHERE {"
-		//				+ "avires:SK263 ?pred ?subject ."
-		//				+ "}");
-		//
-		//		QueryExecution queryExecution = QueryExecutionFactory.create(query, set);
-		//
-		//		ResultSet res = queryExecution.execSelect();
-		//		System.out.println("out");
-		//		while (res.hasNext()){
-		//			System.out.println(res.next().toString());
-		//		}
 
 		set.end();
 

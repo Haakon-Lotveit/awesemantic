@@ -13,9 +13,8 @@ import java.util.Queue;
 import java.util.Scanner;
 
 /**
- * 
- * @author Erik
- *
+ * Class with auxillery methods that fetch files from Avinor and 
+ * Write them to disc.
  */
 public class XmlSingle {
 
@@ -57,7 +56,7 @@ public class XmlSingle {
 						File outfile = new File("xml/xmlA/" + airport+ "A.xml");
 						if(!outfile.exists()){
 							if(!outfile.createNewFile()){
-							System.err.printf("Filen \"%s\" Kunne ikke lages.%nTODO: Fiks slik at den blir laget automatisk om den ikke finnes.%n",
+							System.err.printf("File not created.%nTODO: Automatic if not existent.%n",
 											  outfile.getAbsolutePath());
 							System.exit(1);
 							}

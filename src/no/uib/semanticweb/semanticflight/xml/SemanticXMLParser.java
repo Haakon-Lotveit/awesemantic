@@ -18,7 +18,6 @@ import org.xml.sax.SAXException;
 
 /**
  * Parse xml and create Flight objects representing them.
- * @author ken
  *
  */
 public class SemanticXMLParser {
