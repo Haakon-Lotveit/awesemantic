@@ -12,18 +12,28 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
+/**
+ * 
+ * @author Erik
+ *
+ */
 public class XmlSingle {
 
 	private static Queue<File> xmlQueue = new LinkedList<File>();
+
+	// Rekursivt brukt metode for å laste ned xml-filer fra Avinor.
 	/**
-	 * @param args
+	 * 
+	 * @param iata Listen over iatakoder som man skal finne koblinger til og laste ned.
+	 * @param round Hvor dypt man er kommet i rekursjonen
+	 * @param depth Ønsket rekursjonsdybde.
 	 */
 	public void connections(ArrayList<ArrayList<String>> iata, int round, int depth){
 		if(round == depth){
-
+			// Ingenting blir gjort om man har nådd ønsket rekursjonsdybde.
 		}else{
+			//Hvis en xml fil av den ønskede iatakoden ikke allerede eksisterer generes denne.
 			for(int i = 0; i< iata.get(round).size(); i++){
-//				long startTime = System.nanoTime();
 				String airport = iata.get(round).get(i); 
 				File f = new File("xml/xmlA/" + iata.get(round).get(i)+ "A.xml");
 				File f2 = new File("xml/xmlD/" + iata.get(round).get(i)+ "D.xml");
@@ -35,10 +45,12 @@ public class XmlSingle {
 					xmlQueue.add(f2);
 				}
 				if(f.isFile()|f2.isFile()){
-
+					// Hvis filen allerede eksisterer gjøres ingenting.
 				}
 				else{
 					URL url;
+					//Om filen ikke finnes kopieres den fra avinor.
+					//Arrivals
 					try {
 						url = new URL("http://flydata.avinor.no/XmlFeed.asp?airport="+ airport + "&direction=A");
 						Scanner s = new Scanner(url.openStream());
@@ -63,6 +75,7 @@ public class XmlSingle {
 						e.printStackTrace();
 					}
 					try {
+						//Departures
 						url = new URL("http://flydata.avinor.no/XmlFeed.asp?airport="+ airport + "&direction=D");
 						Scanner s = new Scanner(url.openStream());
 						BufferedWriter writer = new BufferedWriter(new FileWriter("xml/xmlD/" + airport+ "D.xml"));
@@ -81,6 +94,7 @@ public class XmlSingle {
 
 					BufferedReader reader;
 					try {
+						//går igjennom de nye xml-filene for å finne ut hvilke andre iata koder som er tilknyttet.
 						reader = new BufferedReader(new FileReader("xml/xmlD/" + airport+ "D.xml"));
 						String xml = "";
 						while(reader.readLine() != null){
@@ -95,23 +109,20 @@ public class XmlSingle {
 						String[]parts = xml.split("<airport>|<via_airport>|,");
 						String[]iAta = new String[parts.length-1];
 						ArrayList<String> sublist = new ArrayList<String>();
+						//lager en ny liste med iata koder for neste kall av metoden.
 						for(int j = 1; j < parts.length; j++){
 							String sub = parts[j].substring(0,3);
 							sublist.add(sub);
 							iAta[j-1] = sub;
 						}
 						iata.add(sublist);
+						//nytt rekursivt kall som øker rundetallet.
 						connections(iata, round+1, depth);
 
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-
-//					long endTime = System.nanoTime();
-
-//					long duration = endTime - startTime;
-					//					System.out.println(duration);
 				}
 			}
 		}
