@@ -126,9 +126,28 @@ public class SemanticFlight {
 		else{
 			System.out.println("Running as a service");
 			// Third argument in scheduledAtFixedRate define run-time
-			// TODO put scheduled time in ini-file
+			
+			Ini ini = null;
+			try {
+				ini = new Ini(new File("Settings.ini"));			
+			} catch (InvalidFileFormatException e) { /* Just prints for now */
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// gets the location from the ini. Else default location.
+			int delayTime = 50;
+
+			if(null != ini){
+				delayTime = ini.get("Scrape", "DelayTime", Integer.class);
+				System.out.println("Delay time set to: " + delayTime);
+			}
+			
 			ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-			executor.scheduleAtFixedRate(semanticRunnable, 0, 40, TimeUnit.SECONDS);
+			executor.scheduleAtFixedRate(semanticRunnable, 0, delayTime, TimeUnit.SECONDS);
 
 		}
 	}
