@@ -29,17 +29,25 @@ import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.rdf.model.Model;
 
+/**
+ * Runs our program!
+ * @author ken
+ *
+ */
 public class SemanticFlight {
-	/**
-	 * Hvor vi forventer at inifilen skal ligge. Vi slipper unna med statisk variabel, siden den bare er på et sted.
-	 * Merk at vi må hardkode hvor minst en konfigurasjonsfil er, så vi bruker Settings.ini, og holder oss til at den må være et spesifikt sted.
-	 */
+	
 	private static final File INI_FILE = new File("Settings.ini");
 	private static boolean runOnce = false;
 	public static File getIniFile(){
 		return INI_FILE;
 	}
 
+	/**
+	 * Accepts two arguments. --setup creates folders and ini-file
+	 * --run-once lifts avinor xmls once. No arguments run the application
+	 * as a continual service.
+	 * @param args
+	 */
 	public static void main(String[] args){
 
 		if(args.length >= 1){
@@ -60,14 +68,14 @@ public class SemanticFlight {
 		}
 
 		/*
-		 * Dersom vi ikke har alt vi trenger for å kjøre når vi starter,
-		 *  så krasjer vi med en gang, istedenfor å sløse med alles tid.
+		 * Checks if folders and inifile are present
 		 */
 		if(!validateEnvironment()){
 			System.out.println("Invalid environment");
 			System.exit(1);
 		}
 
+		// Runnable wich we loop when run as service.
 		Runnable semanticRunnable = new Runnable() {
 			public void run() {
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -89,39 +97,17 @@ public class SemanticFlight {
 				time = System.currentTimeMillis();
 
 				debugQuerys();				
-				//				backupTriples();
 
 				timeEnd = System.currentTimeMillis() - time;
 				System.out.println("Loading model took: " + timeEnd/1000);
 
-				//		rdfLoader.loadAirportsDbpedia();
 			}
 		};
 		System.out.println("Startup complete. Running");
+		
+		// executes the runable once or loop with delay set in Settings.ini
 		if(SemanticFlight.runOnce){
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			System.out.println(dateFormat.format(cal.getTime()));
-
-			long time = System.currentTimeMillis();
-
-			Queue<File> xmlFileQueue = pullAvinorXML();
-
-			long timeEnd = System.currentTimeMillis() - time;		
-			System.out.println("Downloading xml took: " + timeEnd/1000 + " XMLs: " + xmlFileQueue.size());
-			time = System.currentTimeMillis();
-
-			// Parse XML and then persist triples
-			parseAndPersistXMLQueue(xmlFileQueue);
-			timeEnd = System.currentTimeMillis() - time;
-			System.out.println("Parsing took: " + timeEnd/1000);		
-			time = System.currentTimeMillis();
-
-			debugQuerys();				
-
-			timeEnd = System.currentTimeMillis() - time;
-			System.out.println("Loading model took: " + timeEnd/1000);
-
+			semanticRunnable.run();
 		}
 		else{
 			System.out.println("Running as a service");
@@ -129,7 +115,7 @@ public class SemanticFlight {
 			
 			Ini ini = null;
 			try {
-				ini = new Ini(new File("Settings.ini"));			
+				ini = new Ini(getIniFile());			
 			} catch (InvalidFileFormatException e) { /* Just prints for now */
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -138,7 +124,7 @@ public class SemanticFlight {
 				e.printStackTrace();
 			}
 
-			// gets the location from the ini. Else default location.
+			// gets the delaytime from the ini. Else default location.
 			int delayTime = 50;
 
 			if(null != ini){
