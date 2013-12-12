@@ -20,18 +20,18 @@ public class XmlSingle {
 
 	private static Queue<File> xmlQueue = new LinkedList<File>();
 
-	// Recursive method used to extract xml-files from Avinor.
+	// Iterative method used to extract xml-files from Avinor.
 	/**
 	 * 
 	 * @param iata The list of iAta codes that we wish to extract xml-files from.
-	 * @param round Number of recursions already executed.
-	 * @param depth Maximum number of recursion.
+	 * @param round Number of iterations already executed.
+	 * @param depth Maximum number of iterations.
 	 */
 	public void connections(ArrayList<ArrayList<String>> iata, int round, int depth){
 		if(round == depth){
-			// Nothing is done if maximum recursion depth is reached.
+			// Nothing is done if maximum iterations depth is reached.
 		}else{
-			//Looping through all the iata-codes for the given round of recursion
+			//Looping through all the iata-codes for the given round of running
 			for(int i = 0; i< iata.get(round).size(); i++){
 				String airport = iata.get(round).get(i); 
 				File f = new File("xml/xmlA/" + iata.get(round).get(i)+ "A.xml");
@@ -108,14 +108,14 @@ public class XmlSingle {
 						String[]parts = xml.split("<airport>|<via_airport>|,");
 						String[]iAta = new String[parts.length-1];
 						ArrayList<String> sublist = new ArrayList<String>();
-						// A new list of codes is created for the next round of recursion.
+						// A new list of codes is created for the next iteration.
 						for(int j = 1; j < parts.length; j++){
 							String sub = parts[j].substring(0,3);
 							sublist.add(sub);
 							iAta[j-1] = sub;
 						}
 						iata.add(sublist);
-						// New recursive call, round number is increased.
+						// New iterative call, round number is increased.
 						connections(iata, round+1, depth);
 
 					} catch (IOException e) {
