@@ -10,7 +10,6 @@ import time
 import sys
 from awesemantic import base_url, port, dataset, query_prefix, result_type
 
-airport = sys.argv[1]
 query = (u'SELECT DISTINCT ?namn ?iata WHERE {'
          u'{'
          u'?p <http://awesemantic.com/properties/departingAirport> ?iata .'
